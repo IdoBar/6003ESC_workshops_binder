@@ -1,4 +1,4 @@
-install.packages(c(
+install.packages(c("tweetrmd", "pandoc", 
   "tidyverse", "pacman", "shiny", "rmarkdown", "ggpubr", "paletteer",
   "learnr",  "scales", "captioner", "here", "htmltools", "fontawesome",  
   "agricolae", "car", "MASS", "highcharter", "plotly", "lubridate",
