@@ -1,1 +1,2 @@
 # mkdir -p data
+R -e "remotes::install_github('gadenbuie/tweetrmd')"
