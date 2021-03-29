@@ -2,7 +2,7 @@
 <!-- badges: start -->
 
 [![Launch Rstudio
-Binder](http://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/IdoBar/6003ESC_workshops_binder/main?urlpath=rstudio)
+Binder](http://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/IdoBar/6003ESC_workshops_binder/conda-install?urlpath=rstudio)
 <!-- badges: end -->
 
 # Scientific Data Analysis Workshops (Binder-ready)
@@ -25,7 +25,7 @@ setup locally on the students’ computers or using
 
 Launch Binder with this repository by clicking on this badge - [![Launch
 Rstudio
-Binder](http://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/IdoBar/6003ESC_workshops_binder/main?urlpath=rstudio),
+Binder](http://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/IdoBar/6003ESC_workshops_binder/conda-install?urlpath=rstudio),
 then navigate to the folder that contains the data and tutorial (in HTML
 format) for each week. All required packages and data files are “bound”
 in the repository and you can start working straight away.
