@@ -1,0 +1,272 @@
+---
+title: "Tutorial for Workshop 2 - Descriptive Statistics"
+subtitle: "Scientific Data Analysis 6003ESC" 
+author: "Dr. Ido Bar"
+date: "15/03/2021"
+output: 
+    html_document:
+#      css: "style/style.css"
+      toc: true
+      toc_float: true
+      toc_depth: 3
+      highlight: pygments
+      number_sections: false
+      code_folding: hide
+---
+
+```{r setup, include=FALSE}
+pacman::p_load(tidyverse, captioner, ggpubr, paletteer, fontawesome, here)
+pacman::p_load_gh("gadenbuie/tweetrmd")
+# pacman::p_load_gh("mitchelloharawild/icons", update = FALSE)
+knitr::opts_chunk$set(echo = TRUE, fig.align='center')
+# setup figure and table captions
+figs <- captioner(prefix="Figure")
+tbls <- captioner(prefix="Table")
+figs(name="binder_export", "Download files from Binder/RStudio screenshot.")
+figs(name="stats_mem","Decriptive statistics meme.")
+figs(name="cont_histo","Histogram of continent data.")
+figs(name="lifeExp_histo","Histogram of life expectancy data.")
+figs(name="lifeExp_histo2","Histogram of life expectancy data by continent.")
+figs(name="density","Density plot of life expectancy data by continent.")
+figs(name="boxplots","Box plots of life expectancy data by continent.")
+figs(name="violin","Violin plots of life expectancy data by continent.")
+figs(name="violin_box","Combined violin and box plots of life expectancy data by continent.")
+figs(name="interactive_boxplots","Interactive box plots of life expectancy data by continent (powered by Plotly).")
+
+# figs(name="asia_lifexpct4","Life expectancy by years in Asian countries (beautify the plot with themes, colour palettes and labels).") 
+# figs(name="gdp_life","Relationship between GDP per capita and life expectancy by continent")
+# figs(name="gdp_life_log","Relationship between GDP per capita and life expectancy by continent (log-scaled X-axis")
+# figs(name="ggplot2_layers","A visualisation of the layer concept in 'ggplot2' package (starting from bottom up, credit to [Coding Club](https://ourcodingclub.github.io/tutorials/dataviz-beautification-synthesis/#distributions)).")
+# figs(name="GOT_palette", "An example of a 'ggplot2' theme inspired by Game of Thrones ([tvthemes package](https://github.com/Ryo-N7/tvthemes))")
+```
+
+
+```{js logo-js, echo=FALSE}
+$(document).ready(function() {
+  $('#header').parent().prepend('<div id=\"Griffith logo\"><img src=\"https://www.griffith.edu.au/__data/assets/image/0018/653121/Griffith_Full_Logo_scaled.png\" style=\"position:absolute; top:50px; right:0; padding:20px; height:120px\"></div>');
+  $('#header').css('margin-right', '120px')
+});
+```
+
+## Instructions
+
+The following tutorial will let you reproduce the plots that we are going to create at the workshop using R.  
+Please read carefully and follow the steps. Wherever you see the <kbd>Code</kbd> icon on the right you can click on it to see the actual code used in that section.  
+To run R and RStudio on Binder, click on this badge - [![Launch Rstudio Binder](http://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/IdoBar/6003ESC_workshops_binder/main?urlpath=rstudio){target="_blank"}.  
+Additional instructions (and screenshots) on using R, RStudio and Binder are available in [Workshop1 Tutorial on BB](https://bblearn.griffith.edu.au/bbcswebdav/pid-6021408-dt-content-rid-117013314_1/xid-117013314_1){target="_blank"}.  
+
+
+## Analyse Data in R
+### Install Extra Packages
+
+For this analysis we will again use some packages from the [Tidyverse](https://www.tidyverse.org/), but this time we load the specific packages (which are supposed to be pre-installed on your computer) to try and avoid having to download the entire `tidyverse`. Please install the packages if you're getting error when running the `library()` command.  In addition we will use the `plotly` package to create interactive plots.  
+To install these packages, we use the `install.packages('package')` command, please note that the package name need to be quoted and that we only need to perform it once (if we followed step 3b above, or every time we restart the server if we didn't), or when we want or need to update the package.  Once the package was installed, we can load its functions using the `library(package)` command. _Note that in this case we use the package name without quotes!_.  
+
+```{r install_packages, eval=FALSE}
+# install required packages - needed only once! (comment with a # after first use)
+# install.packages(c("dplyr", "ggplot2", "readr","RColorBrewer", "Rmisc", "plotly"))
+install.packages("tibble")
+# load required packages
+library(dplyr)
+library(readr)
+library(ggplot2)
+library(RColorBrewer)
+```
+
+More information on R packages can be found in this [tutorial](http://www.sthda.com/english/wiki/installing-and-using-r-packages){target="_blank"}.
+
+### Read Data
+
+Now that we've got RStudio up and running and our packages installed and loaded, we can read data into R from our local computer or from web locations using dedicated functions specific to the file type (`.csv`, `.txt`, `.xlsx`, etc.).  
+We need to provide a variable name that will store the data and remember that R holds its variables in the computers RAM (which will be the limiting factor in terms of size of data that can be handled).   
+We will use the `read_csv()` command/function from the `readr` package (part of the `tidyverse`) to load the data from a file hosted on the web into a variable of type **data frame** (table). If we don't want to use external packages, we can use the `read.csv()` function from base R (which will slightly change the structure of the resulting data frame).  
+
+```{r read_data, message=FALSE, warning=FALSE}
+# read data straight form the web
+gapdata <- read_csv("https://tinyurl.com/gapdata")
+```
+
+### Data Exploration
+
+We can explore the data by clicking on the table icon next to the variable name in RStudio "Environment" tab (top right pane), but that's not a good practice because it won't work with large data sets.  
+We can use built-in functions for a brief exploration, such as `head()` to show the first 10 rows of the data and `str()` or `glimpse()` for the type of data in each column:
+
+```{r explore_data}
+#explore the data frame
+head(gapdata) # show first 10 rows of the data and typr of variables
+str(gapdata) # show data structure
+glimpse(gapdata) # show data structure using a tidyverse function
+```
+
+### Descriptive Statistics
+We can also produce some descriptive statistics to better understand the data and the nature of each variable.  The `summary()` function (as can be guessed by its name) provides a quick summary of basic descriptive statistics, such as the _mean_, _min_, _max_ and quantiles for continous numerical values.  
+
+```{r summary}
+# summary of variables in my data
+summary(gapdata)
+```
+
+```{r stats-tweet, fig.cap=figs(name="stats_mem")}
+include_tweet("https://twitter.com/geotheory/status/1299766175354757121")
+```
+
+If we want to see how it can be used to summarise nominal (categorical) data, we can apply it on the same data, but that had been imported using the `read.csv()` function, that automatically converts text columns into factors (that are variables with predefined categories).  
+
+```{r summary_factors}
+# apply summary on data imported with read.csv(), what are the differences?
+summary(read.csv("https://tinyurl.com/gapdata"))
+```
+We can see that when a variable is defined as a factor (contains categories), `summary()` will automatically summarise and count how many times wach category appears in the data.
+
+We can also sort the data to look at extreme values. As opposed to using `summary()`, `max()` or `min()`, this way we see all the values in the other columns, so we can see not only the minimal recorded _lifeExp_, but also in which coutry and at which year it was observed.
+
+```{r sort_data}
+# look at the lowest lifeExpt
+gapdata %>% arrange(lifeExp)
+# Look at top rich countries
+gapdata %>% arrange(desc(gdpPercap))
+```
+
+## Descriptive Statistics plotting
+
+we can use several graph types to look at our data and assess its distribution, outliers, categories and more. A good reference to visualisation types can be found at [From Data to Viz website](https://www.data-to-viz.com/){target="_blank"}.  
+What type of varibles do we have in each column? Knowing that can help us determine how we can visualise each one.    
+Do find out, we can look again at the results of `summary()` to refresh our memory (or scroll up).
+
+We have two character categorical variables, _country_ and _continent_ and 4 numerical variables (_year, pop, lifeExp and gdpPercap_). Are all the numerical variables similar? Do we treat _year_ as a continous numerical variable or as a nominal one? We need to decide based on our analysis.
+
+### Histogram
+A histogram counts how many observations we have from each value and lets us assess how the data is distributed. When applied to categorical data, it shows us a graphic visualisation of the same output as running `gapdata %>% dplyr::count(continent)` (I'm using the double colon `::` to tell R to use the `count()` function from `dplyr` package).  
+
+```{r histo_continent, fig.cap=figs(name="cont_histo")}
+gapdata %>% dplyr::count(continent)
+ggplot(gapdata, aes(x=continent, fill=continent)) +
+  geom_histogram(stat = "count", width=0.8) +
+  scale_fill_brewer(palette = "Set1") + theme_bw(16)
+```
+
+The real power of a histogram though comes when we apply it to a continous numerical variable. However, when the data is truely continous, the range need to be divided to "bins" into which each observation falls and then the sum of observation in each bin is presented.  
+
+```{r histo_numeric, fig.cap=figs(name="lifeExp_histo")}
+ggplot(gapdata, aes(x=lifeExp)) +
+  geom_histogram(fill="lightskyblue") +
+  theme_bw(16)
+```
+
+We can increase the number of bins for higher resolution, or decrease it for a more coarse look.  We can also colour each continent to get a better understanding of the distribution of values from each continent.  
+
+```{r histo_numeric2, fig.cap=figs(name="lifeExp_histo2")}
+ggplot(gapdata, aes(x=lifeExp, fill=continent)) +
+  geom_histogram(bins = 100) +
+  scale_fill_brewer(palette = "Set2") +
+  theme_bw(16)
+```
+
+Can you try and plot a histogram of the years, what type of data is it based on the output?
+
+#### Density Plots
+
+Another variant of the histogram is a density plot, which is a "smoothed" version of the histogram. If we apply some transparency to the fill colour (using the `alpha=0.5` argument), we can see where the data from the continents overlap (see `r figs(name="density", display="cite")`) .
+
+```{r density, fig.cap=figs(name="density")}
+ggplot(gapdata, aes(x=lifeExp, fill=continent)) +
+  geom_density(alpha=0.5) +
+  scale_fill_brewer(palette = "Dark2") +
+  theme_bw(16)
+```
+
+
+### Boxplot
+
+A more detailed method to look at distribution of continous numerical data is using a boxplot. These are visual representations of the descriptive statistics provided by `summary()` command. Each boxplot visualises five summary statistics (the median, two hinges and two whiskers), and all "outlying" points individually. The hinges (top and bottom of box) represent the range between the 25%-75% quantiles, while the length whiskers represent 1.5*IQR (interquantile range) from the hinges. Data points that fall outside this range are considered "outliers" and are plotted individually.
+
+
+```{r boxplot, fig.cap=figs(name="boxplots")}
+ggplot(gapdata, aes(x=continent, y=lifeExp,  colour=continent)) +
+  geom_boxplot(width=0.25) +
+  scale_colour_brewer(palette = "Set1") +
+  theme_bw(16)
+```
+
+A box plot representation gives us a better tool to compare groups.
+
+### Violin Plots
+
+We saw that the boxplot let us get a better understanding of how the data is distributed around the median, but it doesn't give us the notion of the density of data observations that were collected along the range (like the histogram did).  
+A violin plot brings the best in both worlds and it is basically a vertical, 2-sided density plots that are plotted along the Y-axis (see `r figs(name="violin", display="cite")`).
+
+```{r violin, fig.cap=figs(name="violin")}
+ggplot(gapdata, aes(x=continent, y=lifeExp,  fill=continent)) +
+  geom_violin(draw_quantiles = c(0.2,0.8), trim = FALSE) +
+  scale_fill_brewer(palette = "Dark2") +
+  theme_bw(16)
+```
+
+Note that in R we can easily determine which quantiles we wish to plot. If we sepcify `trim=TRUE`, the violin plots will be trimmed and will not include the outliers. 
+
+We can then go ahead and combine violin with boxplots, along with a few adjustments, such as calculating and plotting the average value, to make the plot "publication" ready (`r figs(name="violin_box", display="cite")`).
+
+
+```{r violin_box, fig.cap=figs(name="violin_box")}
+# calculate mean
+mean_values <- gapdata %>% group_by(continent) %>% dplyr::summarise(lifeExp=mean(lifeExp))
+ggplot(gapdata, aes(x=continent, y=lifeExp, colour=continent)) +
+  geom_violin(aes(fill=continent), alpha=0.6) +
+  geom_boxplot(width=0.15) + 
+  geom_point(data = mean_values, size=2.5, pch=18) +
+  scale_fill_brewer(palette = "Dark2") +
+  scale_colour_brewer(palette = "Dark2") +
+  labs(y="Life Expectancy", fill="Continent", colour="Continent", x="") +
+  theme_bw(16)
+```
+
+### Interactive exploration
+Sometimes it is very useful to be able to interact with the plot, to interrogate outliers and get the values in real time.
+We can use the `plotly` package for that on the boxplot we created earlier.
+
+```{r boxplot_interactive, fig.cap=figs(name="interactive_boxplots")}
+plot <- ggplot(gapdata, aes(x=continent, y=lifeExp,  colour=continent)) +
+  geom_boxplot(width=0.25) +
+  scale_colour_brewer(palette = "Set1") +
+  labs(y="Life Expectancy", colour="Continent", x="") +
+  theme_bw(16)
+plotly::ggplotly(plot)
+```
+
+Use your mouse to hover over the graph in `r figs(name="interactive_boxplots", display="cite")` to get details of outliers and summary statistics for each continent.  
+This is a great way to share plots between students/supervisors/collaborators to engage discussion on data interpretation and analysis and a tool to allow the public to interact with plots that are hosted online (ask me how!).
+
+#### Downloading files from Binder
+After we've finished working on Binder we can download the R script that we wrote and any output files (summary tables and figures). We can access those files by using the `files` tab in RStudio (bottom right pane).  
+Select the files/folders that you would like to download and click on `r  fa("cog", fill ="#4383A4")`More `r fa("long-arrow-alt-right")` Export... (see screenshot in `r figs(name="binder_export",display="cite")` below) to save the file on your computer.  
+
+```{r binder_export, echo=FALSE, fig.cap=figs(name="binder_export"), out.width = '75%'}
+knitr::include_graphics(here("figs/Rstudio_export_screenshot.png"))
+```
+
+
+## Additional Resources
+
+* Stats and R blog -- Contains useful explanations and R code on statistics, including the very useful posts on [Descriptive statistics by hand](https://www.statsandr.com/blog/descriptive-statistics-by-hand/){target="_blank"} and [Descriptive statistics in R](https://www.statsandr.com/blog/descriptive-statistics-in-r/){target="_blank"}  
+* Statistical tools for high-throughput data analysis (STHDA) -- An extremely useful website with all things statistics, data analysis and visualisation in R. For this tutorial, look at the [Descriptive statistics and graphics](http://www.sthda.com/english/wiki/descriptive-statistics-and-graphics){target="_blank"} page  
+* From Data to Viz leads you to the most appropriate graph for your data -- https://www.data-to-viz.com/
+* [Coding Club](https://ourcodingclub.github.io/){target="_blank"}: A Positive Peer-Learning Community (ecology and environmental science students and researchers from the University of Edinburgh) -- https://ourcodingclub.github.io/
+* Beautiful plotting in R: A ggplot2 cheatsheet -- provides lots of recipes and easy fixes for common tasks when creating `ggplot2` plots ([link](http://zevross.com/blog/2014/08/04/beautiful-plotting-in-r-a-ggplot2-cheatsheet-3/){target="_blank"})  
+* The Evolution of a ggplot - a series of tutorials to create beautiful and informative plots in R ([link](https://www.cedricscherer.com/2019/05/17/the-evolution-of-a-ggplot-ep.-1/){target="_blank"})   
+```{r ggplot_evol}
+include_tweet("https://twitter.com/WeAreRLadies/status/1280859374668283906")
+```
+
+* [paletteer](https://github.com/EmilHvitfeldt/paletteer){target="_blank"} -- An R package that let's you use colour palette from a range of available packages (see examples of available palettes [here](https://github.com/EmilHvitfeldt/r-color-palettes){target="_blank"})  
+Plot anything with ggplot2 - [YouTube workshops](https://www.youtube.com/watch?v=h29g21z0a68){target="_blank"}  
+<iframe width="560" height="315" src="https://www.youtube.com/embed/h29g21z0a68" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>  
+* How to write dynamic documents like this one? Learn RMarkdown using this "[Definite Guide](https://bookdown.org/yihui/rmarkdown/){target="_blank"}"   
+```{r knit_rmarkdown, echo=FALSE, out.width = '80%'}
+knitr::include_graphics("https://pbs.twimg.com/media/EvlpAC2XYAgcxsI?format=png")
+```
+* Useful cheatsheets can be found on the [RStudio Cheatsheets website](https://rstudio.com/resources/cheatsheets/){target="_blank"} (start with the most useful/basic ones relevant to this course - RStudio IDE, Data Import, Transformation and Visualization, RMarkdown and more)  
+
+
+## Contact 
+
+Please contact me at i.bar@griffith.edu.au for any questions or comments.
