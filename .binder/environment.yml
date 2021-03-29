@@ -3,7 +3,9 @@ channels:
   - conda-forge
   - r
 dependencies:
-  - r-base
+  - r-irkernel=1.1
+  - r-base=3.6.1-3bionic
+  - r-devtools
   - r-remotes
   - r-tidyverse
   - r-pacman
