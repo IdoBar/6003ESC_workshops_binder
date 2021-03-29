@@ -26,9 +26,9 @@ setup locally on the students’ computers or using
 Launch Binder with this repository by clicking on this badge - [![Launch
 Rstudio
 Binder](http://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/IdoBar/6003ESC_workshops_binder/main?urlpath=rstudio),
-then navigate the folder that contains the data and tutorial (in HTML
+then navigate to the folder that contains the data and tutorial (in HTML
 format) for each week. All required packages and data files are “bound”
-in the repository and the students can start working straight away.
+in the repository and you can start working straight away.
 
 For more details and instructions how to setup a similar repository,
 please visit [From Zero to Binder in
