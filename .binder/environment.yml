@@ -3,6 +3,7 @@ channels:
   - conda-forge
   - r
 dependencies:
+  - r-base
   - r-remotes
   - r-tidyverse
   - r-pacman
