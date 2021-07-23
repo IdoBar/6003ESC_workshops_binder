@@ -2,7 +2,7 @@
 title: "Tutorial for Workshop 2 - Descriptive Statistics"
 subtitle: "Scientific Data Analysis 6003ESC" 
 author: "Dr. Ido Bar"
-date: "15/03/2021"
+date: "23/07/2021"
 output: 
     html_document:
 #      css: "style/style.css"
@@ -15,7 +15,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-pacman::p_load(tidyverse, captioner, ggpubr, paletteer, fontawesome, here)
+pacman::p_load(tidyverse, captioner, ggpubr, paletteer, fontawesome, here, plotly)
 pacman::p_load_gh("gadenbuie/tweetrmd")
 # pacman::p_load_gh("mitchelloharawild/icons", update = FALSE)
 knitr::opts_chunk$set(echo = TRUE, fig.align='center')
@@ -99,7 +99,7 @@ glimpse(gapdata) # show data structure using a tidyverse function
 ```
 
 ### Descriptive Statistics
-We can also produce some descriptive statistics to better understand the data and the nature of each variable.  The `summary()` function (as can be guessed by its name) provides a quick summary of basic descriptive statistics, such as the _mean_, _min_, _max_ and quantiles for continous numerical values.  
+We can also produce some descriptive statistics to better understand the data and the nature of each variable.  The `summary()` function (as can be guessed by its name) provides a quick summary of basic descriptive statistics, such as the _mean_, _min_, _max_ and quantiles for continuous numerical values.  
 
 ```{r summary}
 # summary of variables in my data
@@ -110,15 +110,15 @@ summary(gapdata)
 include_tweet("https://twitter.com/geotheory/status/1299766175354757121")
 ```
 
-If we want to see how it can be used to summarise nominal (categorical) data, we can apply it on the same data, but that had been imported using the `read.csv()` function, that automatically converts text columns into factors (that are variables with predefined categories).  
+If we want to see how it can be used to summarise nominal (categorical) data, we can apply it on the same data, but that had been imported using the `read.csv()` function, that automatically converts text columns into factors, which are vectors of strings/characters with predefined categories (*note that this is no longer the default behaviour in R versions >4.0*).  
 
 ```{r summary_factors}
 # apply summary on data imported with read.csv(), what are the differences?
-summary(read.csv("https://tinyurl.com/gapdata"))
+summary(read.csv("https://tinyurl.com/gapdata", stringsAsFactors = TRUE))
 ```
 We can see that when a variable is defined as a factor (contains categories), `summary()` will automatically summarise and count how many times wach category appears in the data.
 
-We can also sort the data to look at extreme values. As opposed to using `summary()`, `max()` or `min()`, this way we see all the values in the other columns, so we can see not only the minimal recorded _lifeExp_, but also in which coutry and at which year it was observed.
+We can also sort the data to look at extreme values. As opposed to using `summary()`, `max()` or `min()`, this way we see all the values in the other columns, so we can see not only the minimal recorded _lifeExp_, but also in which country and at which year it was observed.
 
 ```{r sort_data}
 # look at the lowest lifeExpt
@@ -130,10 +130,10 @@ gapdata %>% arrange(desc(gdpPercap))
 ## Descriptive Statistics plotting
 
 we can use several graph types to look at our data and assess its distribution, outliers, categories and more. A good reference to visualisation types can be found at [From Data to Viz website](https://www.data-to-viz.com/){target="_blank"}.  
-What type of varibles do we have in each column? Knowing that can help us determine how we can visualise each one.    
+What type of variables do we have in each column? Knowing that can help us determine how we can visualise each one.    
 Do find out, we can look again at the results of `summary()` to refresh our memory (or scroll up).
 
-We have two character categorical variables, _country_ and _continent_ and 4 numerical variables (_year, pop, lifeExp and gdpPercap_). Are all the numerical variables similar? Do we treat _year_ as a continous numerical variable or as a nominal one? We need to decide based on our analysis.
+We have two character categorical variables, _country_ and _continent_ and 4 numerical variables (_year, pop, lifeExp and gdpPercap_). Are all the numerical variables similar? Do we treat _year_ as a continuous numerical variable or as a nominal one? We need to decide based on our analysis.
 
 ### Histogram
 A histogram counts how many observations we have from each value and lets us assess how the data is distributed. When applied to categorical data, it shows us a graphic visualisation of the same output as running `gapdata %>% dplyr::count(continent)` (I'm using the double colon `::` to tell R to use the `count()` function from `dplyr` package).  
@@ -145,7 +145,7 @@ ggplot(gapdata, aes(x=continent, fill=continent)) +
   scale_fill_brewer(palette = "Set1") + theme_bw(16)
 ```
 
-The real power of a histogram though comes when we apply it to a continous numerical variable. However, when the data is truely continous, the range need to be divided to "bins" into which each observation falls and then the sum of observation in each bin is presented.  
+The real power of a histogram though comes when we apply it to a continuous numerical variable. However, when the data is truly continuous, the range need to be divided to "bins" into which each observation falls and then the sum of observation in each bin is presented.  
 
 ```{r histo_numeric, fig.cap=figs(name="lifeExp_histo")}
 ggplot(gapdata, aes(x=lifeExp)) +
@@ -178,7 +178,7 @@ ggplot(gapdata, aes(x=lifeExp, fill=continent)) +
 
 ### Boxplot
 
-A more detailed method to look at distribution of continous numerical data is using a boxplot. These are visual representations of the descriptive statistics provided by `summary()` command. Each boxplot visualises five summary statistics (the median, two hinges and two whiskers), and all "outlying" points individually. The hinges (top and bottom of box) represent the range between the 25%-75% quantiles, while the length whiskers represent 1.5*IQR (interquantile range) from the hinges. Data points that fall outside this range are considered "outliers" and are plotted individually.
+A more detailed method to look at distribution of continuous numerical data is using a boxplot. These are visual representations of the descriptive statistics provided by `summary()` command. Each boxplot visualises five summary statistics (the median, two hinges and two whiskers), and all "outlying" points individually. The hinges (top and bottom of box) represent the range between the 25%-75% quantiles, while the length whiskers represent 1.5*IQR (interquantile range) from the hinges. Data points that fall outside this range are considered "outliers" and are plotted individually.
 
 
 ```{r boxplot, fig.cap=figs(name="boxplots")}
@@ -202,7 +202,7 @@ ggplot(gapdata, aes(x=continent, y=lifeExp,  fill=continent)) +
   theme_bw(16)
 ```
 
-Note that in R we can easily determine which quantiles we wish to plot. If we sepcify `trim=TRUE`, the violin plots will be trimmed and will not include the outliers. 
+Note that in R we can easily determine which quantiles we wish to plot. If we specify `trim=TRUE`, the violin plots will be trimmed and will not include the outliers. 
 
 We can then go ahead and combine violin with boxplots, along with a few adjustments, such as calculating and plotting the average value, to make the plot "publication" ready (`r figs(name="violin_box", display="cite")`).
 
@@ -218,6 +218,13 @@ ggplot(gapdata, aes(x=continent, y=lifeExp, colour=continent)) +
   scale_colour_brewer(palette = "Dark2") +
   labs(y="Life Expectancy", fill="Continent", colour="Continent", x="") +
   theme_bw(16)
+```
+
+#### Raincloud Plots
+Another option to show the distribution of data points, along with some descriptive statistics, is by using "Raincloud Plots", which can convey a lot of useful information.
+See details in **Visualizing Distributions with Raincloud Plots** using ggplot2 ([blog post](https://www.cedricscherer.com/2021/06/06/visualizing-distributions-with-raincloud-plots-with-ggplot2/){target="_blank"})
+```{r raincloud_tweet}
+include_tweet("https://twitter.com/CedScherer/status/1401604888900083713?s=20")
 ```
 
 ### Interactive exploration
@@ -247,24 +254,22 @@ knitr::include_graphics(here("figs/Rstudio_export_screenshot.png"))
 
 ## Additional Resources
 
-* Stats and R blog -- Contains useful explanations and R code on statistics, including the very useful posts on [Descriptive statistics by hand](https://www.statsandr.com/blog/descriptive-statistics-by-hand/){target="_blank"} and [Descriptive statistics in R](https://www.statsandr.com/blog/descriptive-statistics-in-r/){target="_blank"}  
-* Statistical tools for high-throughput data analysis (STHDA) -- An extremely useful website with all things statistics, data analysis and visualisation in R. For this tutorial, look at the [Descriptive statistics and graphics](http://www.sthda.com/english/wiki/descriptive-statistics-and-graphics){target="_blank"} page  
-* From Data to Viz leads you to the most appropriate graph for your data -- https://www.data-to-viz.com/
+* **Stats and R blog** -- Contains useful explanations and R code on statistics, including the very useful posts on [Descriptive statistics by hand](https://www.statsandr.com/blog/descriptive-statistics-by-hand/){target="_blank"} and [Descriptive statistics in R](https://www.statsandr.com/blog/descriptive-statistics-in-r/){target="_blank"}  
+* **Statistical tools for high-throughput data analysis (STHDA)** -- An extremely useful website with all things statistics, data analysis and visualisation in R. For this tutorial, look at the [Descriptive statistics and graphics](http://www.sthda.com/english/wiki/descriptive-statistics-and-graphics){target="_blank"} page  
+* **From Data to Viz** leads you to the most appropriate graph for your data -- https://www.data-to-viz.com/
 * [Coding Club](https://ourcodingclub.github.io/){target="_blank"}: A Positive Peer-Learning Community (ecology and environmental science students and researchers from the University of Edinburgh) -- https://ourcodingclub.github.io/
-* Beautiful plotting in R: A ggplot2 cheatsheet -- provides lots of recipes and easy fixes for common tasks when creating `ggplot2` plots ([link](http://zevross.com/blog/2014/08/04/beautiful-plotting-in-r-a-ggplot2-cheatsheet-3/){target="_blank"})  
-* The Evolution of a ggplot - a series of tutorials to create beautiful and informative plots in R ([link](https://www.cedricscherer.com/2019/05/17/the-evolution-of-a-ggplot-ep.-1/){target="_blank"})   
+* **Beautiful plotting in R**: A ggplot2 cheatsheet -- provides lots of recipes and easy fixes for common tasks when creating `ggplot2` plots ([link](http://zevross.com/blog/2014/08/04/beautiful-plotting-in-r-a-ggplot2-cheatsheet-3/){target="_blank"})  
+* **The Evolution of a ggplot** -- a series of tutorials to create beautiful and informative plots in R ([link](https://www.cedricscherer.com/2019/05/17/the-evolution-of-a-ggplot-ep.-1/){target="_blank"})   
 ```{r ggplot_evol}
 include_tweet("https://twitter.com/WeAreRLadies/status/1280859374668283906")
 ```
-
-* [paletteer](https://github.com/EmilHvitfeldt/paletteer){target="_blank"} -- An R package that let's you use colour palette from a range of available packages (see examples of available palettes [here](https://github.com/EmilHvitfeldt/r-color-palettes){target="_blank"})  
-Plot anything with ggplot2 - [YouTube workshops](https://www.youtube.com/watch?v=h29g21z0a68){target="_blank"}  
-<iframe width="560" height="315" src="https://www.youtube.com/embed/h29g21z0a68" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>  
-* How to write dynamic documents like this one? Learn RMarkdown using this "[Definite Guide](https://bookdown.org/yihui/rmarkdown/){target="_blank"}"   
+* [paletteer](https://github.com/EmilHvitfeldt/paletteer){target="_blank"} -- An R package that lets you use colour palette from a range of available packages (see examples of available palettes [here](https://github.com/EmilHvitfeldt/r-color-palettes){target="_blank"})  
+* **Plot anything with ggplot2** - [YouTube workshops](https://www.youtube.com/watch?v=h29g21z0a68){target="_blank"} 
+* How to write dynamic documents like this one? **Learn RMarkdown** using this "[Definite Guide](https://bookdown.org/yihui/rmarkdown/){target="_blank"}"   
 ```{r knit_rmarkdown, echo=FALSE, out.width = '80%'}
 knitr::include_graphics("https://pbs.twimg.com/media/EvlpAC2XYAgcxsI?format=png")
 ```
-* Useful cheatsheets can be found on the [RStudio Cheatsheets website](https://rstudio.com/resources/cheatsheets/){target="_blank"} (start with the most useful/basic ones relevant to this course - RStudio IDE, Data Import, Transformation and Visualization, RMarkdown and more)  
+* Useful cheatsheets can be found on the [RStudio Cheatsheets website](https://rstudio.com/resources/cheatsheets/){target="_blank"} (start with the most useful/basic ones relevant to this course - **RStudio IDE, Data Import, Transformation and Visualization, RMarkdown** and more)  
 
 
 ## Contact 
