@@ -2,7 +2,7 @@
 title: "Tutorial for Lecture 3 - Analysis of COVID-19 Data"
 subtitle: "Scientific Data Analysis 6003ESC" 
 author: "Dr. Ido Bar"
-date: "22/03/2021"
+date: "23/07/2021"
 output: 
     html_document:
 #      css: "style/style.css"
@@ -49,6 +49,7 @@ required_packages <- c("dplyr", "ggplot2", "paletteer", "stringr",
                        "highcharter", "scales",  "plotly", 
                        "lubridate", "here","ISOweek", "countrycode")
 pacman::p_load(char=required_packages)
+pacman::p_load_gh("gadenbuie/tweetrmd")
 knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
 # setup figure and table captions
 # figs <- captioner(prefix="Figure")
@@ -114,7 +115,7 @@ We will use the `read_csv()` command/function from the `readr` package (part of 
 
 ```{r read_data}
 # read data from the 'data' folder
-covid_data <- read_csv(here("data/csse_country_covid_data_19_03_2021.csv")) %>% 
+covid_data <- read_csv(here("data/csse_country_covid_data_18_07_2021.csv")) %>% 
   rename(Country_Region=`Country/Region`)
 
 ```
@@ -216,7 +217,12 @@ We can see a very similar trend for most countries and while the curve has flatt
 ```
 
 ### Baseline comparison 
-To be able to compare the disease progress between countries, we could "normalise" the data to show the epidemic spread using a similar baseline, for example, counting the days since the 100th confirmed case in each country.
+To be able to compare the disease progress between countries, we could "normalise" the data to show the epidemic spread using a similar baseline, for example, counting the days since the 100th confirmed case in each country.  
+**Make sure to label the axes appropriately!!**
+
+```{r BJ-tweet}
+include_tweet("https://twitter.com/OdedRechavi/status/1417163305085460487?s=20")
+```
 
 ```{r baseline_comparison}
 baselined_data <- most_affected_data %>% filter(Confirmed>=100000) %>% group_by(Country_Region) %>% 
@@ -240,8 +246,10 @@ To do so we will read another dataset of weekly new cases collected by the Europ
 We can read it directly from their website as a `.csv` file (as below) or we can download the most recent daily COVID-19 data from the [website](https://www.ecdc.europa.eu/en/publications-data/data-national-14-day-notification-rate-covid-19){target="_blank"} (download the Excel file and place it in the `data` folder, then use `read_excel()` instead of `read_csv()`).  
 We need to wrangle this one up as well to make sure that the countries names are consistent (try to open the file in excel file and find the issue) and the dates are parsed correctly. We will then calculate the number of accumulated cases and deaths using `mutate(Total_cases=cumsum(Cases), Total_Deaths=cumsum(Deaths)` as well as the number of cases per million people in each country. 
 
+
 ```{r eu_data}
-eu_data <- read_csv("https://opendata.ecdc.europa.eu/covid19/nationalcasedeath/csv", na = "") 
+eu_data <- read_csv("https://opendata.ecdc.europa.eu/covid19/nationalcasedeath/csv", 
+                    na = "") 
 glimpse(eu_data)
 covid_weekly_data <- eu_data %>% 
   rename(Country=country) %>% select(!any_of(c("weekly_count", "rate_14_day"))) %>% 
@@ -391,10 +399,10 @@ What else can we plot or investigate?
 
 ## Additional Resources
 
-* Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE) [data repository](https://github.com/CSSEGISandData/COVID-19){target="_blank"} and [website](https://systems.jhu.edu/research/public-health/ncov/){target="_blank"}
-* EU 14-days COVID-19 data for download in CSV/Excel format [link](https://www.ecdc.europa.eu/en/publications-data/data-national-14-day-notification-rate-covid-19){target="_blank"} 
-* Be awesome in ggplot2: A Practical Guide to be Highly Effective - R software and data visualization ([link](http://www.sthda.com/english/wiki/be-awesome-in-ggplot2-a-practical-guide-to-be-highly-effective-r-software-and-data-visualization){target="_blank"})  
-* COVID-19 vaccination data in [Our World in Data site](https://ourworldindata.org/covid-vaccinations){target="_blank"}
+* **Johns Hopkins University Center for Systems Science and Engineering** (JHU CSSE) [data repository](https://github.com/CSSEGISandData/COVID-19){target="_blank"} and [website](https://systems.jhu.edu/research/public-health/ncov/){target="_blank"}
+* **EU 14-days COVID-19 data** for download in CSV/Excel format [link](https://www.ecdc.europa.eu/en/publications-data/data-national-14-day-notification-rate-covid-19){target="_blank"} 
+* **Be awesome in ggplot2: A Practical Guide to be Highly Effective** -- R software and data visualization ([link](http://www.sthda.com/english/wiki/be-awesome-in-ggplot2-a-practical-guide-to-be-highly-effective-r-software-and-data-visualization){target="_blank"})  
+* **COVID-19 vaccination data** in [Our World in Data site](https://ourworldindata.org/covid-vaccinations){target="_blank"}
 * My very own [COVID-19 dashboard](https://idobar.github.io/covid19-dash/){target="_blank"} (created in R)
 
 ## Contact 

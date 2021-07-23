@@ -2,7 +2,7 @@
 title: "Scientific Data Analysis 6003ESC"
 subtitle: "Tutorial for Workshop 1"
 author: "Dr. Ido Bar"
-date: "04/03/2021"
+date: "23/07/2021"
 output: 
     html_document:
 #      css: "style/style.css"
@@ -66,8 +66,8 @@ RStudio is a set of integrated tools designed to help you be more productive wit
 
 ### Using R and RStudio from Cloud services
 If we want to keep things simple (for this course) or we would like to use R on shared computers, where we can't install software, we can run R and Rstudio through a web client that is hosted on a remote server.  
-We will use the [Binder](https://mybinder.org/) service, which is free, easy to use and can be launched from a single GitHub repository (more about this in the workshop).  
-See the appendix for more details how you can run R and RStudio on [EcoCloud](https://ecocloud.org.au/), another cloud-based service free for Griffith students.
+We will use the [Binder](https://mybinder.org/){target="_blank"} service, which is free, easy to use and can be launched from a single GitHub repository (more about this in the workshop).  
+R and RStudio can also be run on [EcoCloud](https://ecocloud.org.au/){target="_blank"}, another cloud-based service free for Griffith students and oriented at ecology modeling and integration of external databases.
 
 #### Running R and RStudio on Binder
 Using Binder is as simple as clicking on the Binder badge - [![Launch Rstudio Binder](http://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/IdoBar/6003ESC_workshops_binder/main?urlpath=rstudio){target="_blank"}.  
@@ -274,47 +274,17 @@ Please contact me at i.bar@griffith.edu.au for any questions or comments.
 
 ## Additional Resources
 
-* R WTF: What They Forgot to tell you about R, tips and best practices for working in R ([link](https://rstats.wtf/){target="_blank"})  
-* R for Reproducible Scientific Analysis: A Software Carpentry course -- https://swcarpentry.github.io/r-novice-gapminder/ (offered regularly here at GU, follow [\@hackyhourGU](https://twitter.com/hackyhourGU){target="_blank"} on Twitter)  
-* From Data to Viz leads you to the most appropriate graph for your data -- https://www.data-to-viz.com/  
-* [Coding Club](https://ourcodingclub.github.io/){target="_blank"}: A Positive Peer-Learning Community (ecology and environmental science students and researchers from the University of Edinburgh) -- https://ourcodingclub.github.io/  
-* Beautiful plotting in R: A ggplot2 cheatsheet -- provides lots of recipes and easy fixes for common tasks when creating `ggplot2` plots [link](http://zevross.com/blog/2014/08/04/beautiful-plotting-in-r-a-ggplot2-cheatsheet-3/){target="_blank"}   
-* Plot anything with ggplot2 - [YouTube workshops](https://www.youtube.com/watch?v=h29g21z0a68){target="_blank"}  
-<iframe width="560" height="315" src="https://www.youtube.com/embed/h29g21z0a68" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>  
-* Useful cheatsheets can be found on the [RStudio Cheatsheets website](https://rstudio.com/resources/cheatsheets/){target="_blank"} (start with the most useful/basic ones relevant to this course - RStudio IDE, Data Import, Data Transformation and Data Visualization)  
-* [paletteer](https://github.com/EmilHvitfeldt/paletteer){target="_blank"} -- An R package that let's you use colour palette from a huge range of available packages (see examples of available palettes [here](https://github.com/EmilHvitfeldt/r-color-palettes){target="_blank"} and you can even use [TV-themed palettes](https://github.com/Ryo-N7/tvthemes){target="_blank"}) 
+* **R WTF**: What They Forgot to tell you about R, tips and best practices for working in R ([link](https://rstats.wtf/){target="_blank"})  
+* **R for Reproducible Scientific Analysis: A Software Carpentry course** -- https://swcarpentry.github.io/r-novice-gapminder/ (offered regularly here at GU, follow [\@hackyhourGU](https://twitter.com/hackyhourGU){target="_blank"} on Twitter)  
+* **From Data to Viz** leads you to the most appropriate graph for your data -- https://www.data-to-viz.com/  
+* [Coding Club](https://ourcodingclub.github.io/){target="_blank"}: A Positive Peer-Learning Community (ecology and environmental science students and researchers from the University of Edinburgh) -- https://ourcodingclub.github.io/  (I run our very own Coding Club here at Griffith, ask me if you want to join)
+* **Beautiful plotting in R: A ggplot2 cheatsheet** -- provides lots of recipes and easy fixes for common tasks when creating `ggplot2` plots [link](http://zevross.com/blog/2014/08/04/beautiful-plotting-in-r-a-ggplot2-cheatsheet-3/){target="_blank"}   
+* **Plot anything with ggplot2** - [YouTube workshops](https://www.youtube.com/watch?v=h29g21z0a68){target="_blank"} 
+* Useful cheatsheets can be found on the [RStudio Cheatsheets website](https://rstudio.com/resources/cheatsheets/){target="_blank"} (start with the most useful/basic ones relevant to this course - **RStudio IDE, Data Import, Data Transformation and Data Visualization**)  
+* [paletteer](https://github.com/EmilHvitfeldt/paletteer){target="_blank"} -- An R package that lets you use colour palette from a huge range of available packages (see examples of available palettes [here](https://github.com/EmilHvitfeldt/r-color-palettes){target="_blank"} and you can even use [TV-themed palettes](https://github.com/Ryo-N7/tvthemes){target="_blank"}) 
 
 ```{r bluey-tweet}
 include_tweet("https://twitter.com/DrIdoBar/status/1272919164252897286")
 ```
 
 
-
-
-### Appendix - Running R and RStudio on EcoCloud
-[EcoCloud](https://ecocloud.org.au/){target="_blank"} platform that provides this service for all students and staff of participating Australian and NZ universities and government agencies (including Griffith University). A guide on using RStudio within EcoCloud is available [here](https://support.ecocloud.org.au/support/solutions/articles/6000200390-using-rstudio){target="_blank"}.
-
->1. Please navigate to [EcoCloud](https://ecocloud.org.au/){target="_blank"} and follow the prompts to login using your Griffith credentials (AAF login)  
-2. In your dashboard, click on the orange "Launch notebook server" button in the middle of the screen and select "Rstudio notebook" in the popup window and click on the green "Launch" button (see screenshot in `r figs(name="ecocloud_dash",display="cite")` below)  
-
-```{r ecocloud_dash, echo=FALSE, fig.cap=figs(name="ecocloud_dash"), out.width = '80%'}
-knitr::include_graphics(here("figs/ecocloud_Dashboard.png"))
-```
-
->3. Once the server is running, click on the green "Open" button, a new browser tab will open with the JupyterLab dashboard  
-3b. _optional_ Whenever a new server is started on EcoCloud, all previous RStudio settings and installed packages get reset back to defaults.  To overcome this behaviour and make it more user-friendly for long-term and recurring uses, start a new terminal from the JupyterLab dashboard (see bottom of `r figs(name="jupyter_dash",display="cite")`) and type the following Bash (Linux) commands:
-
-```{bash setup_rstudio, eval=FALSE}
-mkdir -p ~/workspace/.rstudio/library
-echo ".libPaths('~/workspace/.rstudio/library')" >> .Rprofile
-ln -s ~/workspace/.rstudio ~/
-```
-_The last 2 commands need to be run every time the server restarts_
-
->4. Click on the RStudio logo in the JupyterLab dashboard (see screenshot in `r figs(name="jupyter_dash",display="cite")` below)
-
-```{r jupyter_dash, echo=FALSE, fig.cap=figs(name="jupyter_dash"), out.width = '80%'}
-knitr::include_graphics(here("figs/Screenshot_JupyterLab.png"))
-```
-
->5. You are now ready to start working in R in the cloud!!
