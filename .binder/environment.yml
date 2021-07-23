@@ -26,4 +26,6 @@ dependencies:
   - r-lubridate
   - r-ISOweek
   - r-countrycode
+  - r-rmisc
+  - r-pastecs
   - pandoc
