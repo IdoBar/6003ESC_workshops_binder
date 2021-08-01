@@ -4,7 +4,7 @@ channels:
   - r
 dependencies:
   - r-irkernel=1.1
-  - r-base=3.6.1
+  - r-base=4.1.0
   - r-devtools
   - r-remotes
   - r-tidyverse
@@ -21,11 +21,10 @@ dependencies:
   - r-agricolae
   - r-car
   - r-MASS
-  - r-highcharter
   - r-plotly
   - r-lubridate
-  - r-ISOweek
-  - r-countrycode
-  - r-rmisc
+  - r-patchwork
+  - r-visdat
   - r-pastecs
+  - r-rmisc
   - pandoc
