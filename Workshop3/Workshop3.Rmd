@@ -2,7 +2,7 @@
 title: "Tutorial for Lecture 3 - Analysis of COVID-19 Data"
 subtitle: "Scientific Data Analysis 6003ESC" 
 author: "Dr. Ido Bar"
-date: "08/08/2021"
+date: "02/08/2021"
 output: 
     html_document:
       css: "style/style.css"
