@@ -275,7 +275,7 @@ covid_data %>% filter(!is.na(continent), !is.na(hosp_patients)) %>% # group_by(l
 ### Hospitalisation and Vaccination rates
 Now we can focus on a subset of countries that have more complete vaccination and hospitalisation rates data, so we could compare them.
 ```{r subset_countries}
-countries_subset <- c("Italy", "United States", "Israel", "United Kingdom",  "France", "Canada", "Czechia")
+countries_subset <- c("Italy", "United States", "Israel", "United Kingdom",  "France", "Czechia")
 # subset our original data to these countries
 hosp_data <- covid_data %>% filter(location %in% countries_subset)
 # define a new colour palette for these countries
