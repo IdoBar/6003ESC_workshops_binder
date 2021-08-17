@@ -12,6 +12,7 @@ dependencies:
   - r-shiny
   - r-rmarkdown
   - r-ggpubr
+  - r-rcpp
   - r-paletteer
   - r-learnr
   - r-scales
@@ -28,3 +29,4 @@ dependencies:
   - r-pastecs
   - r-rmisc
   - pandoc
+  - libgcc
