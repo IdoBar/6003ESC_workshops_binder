@@ -70,8 +70,8 @@ We will use the [Binder](https://mybinder.org/){target="_blank"} service, which 
 R and RStudio can also be run on [EcoCloud](https://ecocloud.org.au/){target="_blank"}, another cloud-based service free for Griffith students and oriented at ecology modeling and integration of external databases.
 
 #### Running R and RStudio on Binder
-Using Binder is as simple as clicking on the Binder badge - [![Launch Rstudio Binder](http://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/IdoBar/6003ESC_workshops_binder/main?urlpath=rstudio){target="_blank"}.  
-Alternatively, you can navigate to the [Binder](https://mybinder.org/){target="_blank"} homepage and enter the URL of this tutorial [GitHub repository](https://github.com/IdoBar/6003ESC_workshops_binder.git){target="_blank"} `https://github.com/IdoBar/6003ESC_workshops_binder.git` and click on the **launch** buton (see screenshot in `r figs(name="binder",display="cite")` below).
+Using Binder is as simple as clicking on the Binder badge - [![Launch Rstudio Binder](../figs/binder_logo.png){width=125px}](https://mybinder.org/v2/gh/IdoBar/6003ESC_workshops_binder/main?urlpath=rstudio){target="_blank"}.  
+Alternatively, you can navigate to the [Binder](https://mybinder.org/){target="_blank"} homepage and enter the URL of this tutorial's [GitHub repository](https://github.com/IdoBar/6003ESC_workshops_binder.git){target="_blank"} `https://github.com/IdoBar/6003ESC_workshops_binder.git` and click on the **launch** button (see screenshot in `r figs(name="binder",display="cite")` below).
  
 ```{r binder, echo=FALSE, fig.cap=figs(name="binder"), out.width = '100%'}
 knitr::include_graphics(here("figs/Screenshot_The_Binder_Project.png"))

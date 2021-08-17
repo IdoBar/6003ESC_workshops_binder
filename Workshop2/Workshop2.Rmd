@@ -52,7 +52,7 @@ $(document).ready(function() {
 
 The following tutorial will let you reproduce the plots that we are going to create at the workshop using R.  
 Please read carefully and follow the steps. Wherever you see the <kbd>Code</kbd> icon on the right you can click on it to see the actual code used in that section.  
-To run R and RStudio on Binder, click on this badge - [![Launch Rstudio Binder](http://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/IdoBar/6003ESC_workshops_binder/main?urlpath=rstudio){target="_blank"}.  
+To run R and RStudio on Binder, click on this badge - [![Launch Rstudio Binder](../figs/binder_logo.png){width=125px}](https://mybinder.org/v2/gh/IdoBar/6003ESC_workshops_binder/main?urlpath=rstudio){target="_blank"}.  
 Additional instructions (and screenshots) on using R, RStudio and Binder are available in [Workshop1 Tutorial on BB](https://bblearn.griffith.edu.au/bbcswebdav/pid-6021408-dt-content-rid-117013314_1/xid-117013314_1){target="_blank"}.  
 
 

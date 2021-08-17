@@ -3,8 +3,9 @@ channels:
   - conda-forge
   - r
 dependencies:
-  - r-irkernel=1.1
-  - r-base=3.6.1
+ # - r-irkernel=1.1
+  #- r-base=3.6.1
+  - r-base=4.1.1
   - r-devtools
   - r-remotes
   - r-tidyverse
@@ -12,7 +13,7 @@ dependencies:
   - r-shiny
   - r-rmarkdown
   - r-ggpubr
-  - r-rcpp
+ # - r-rcpp
   - r-paletteer
   - r-learnr
   - r-scales
@@ -29,4 +30,4 @@ dependencies:
   - r-pastecs
   - r-rmisc
   - pandoc
-  - libgcc
+ # - libgcc

@@ -77,7 +77,7 @@ There are several data sources available online. We will use the data collected 
 
 ## Analyse Data in R
 
-To run R and RStudio on Binder, click on this badge - [![Launch Rstudio Binder](http://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/IdoBar/6003ESC_workshops_binder/main?urlpath=rstudio){target="_blank"}.   
+To run R and RStudio on Binder, click on this badge - [![Launch Rstudio Binder](../figs/binder_logo.png){width=125px}](https://mybinder.org/v2/gh/IdoBar/6003ESC_workshops_binder/main?urlpath=rstudio){target="_blank"}.   
 
 Start RStudio and create a new project named `Workshop3` in a new folder (if you need a reminder ho to do it, check out [Workshop1 Tutorial on BB](https://bblearn.griffith.edu.au/bbcswebdav/pid-6021408-dt-content-rid-117013314_1/xid-117013314_1){target="_blank"}).  
 Once RStudio restarts inside the project's folder, create a new R script named `Workshop3.R` and 2 new folders, one named `data` for our input data and another named `output` for our plots.  

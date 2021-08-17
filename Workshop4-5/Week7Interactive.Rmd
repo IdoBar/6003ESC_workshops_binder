@@ -45,7 +45,7 @@ I have created a very small R package for the material in this part of the cours
 
 To install the binary package pick the one that corresponds to your operating system (xxx.zip for Windows; xxx.tgz for MacOS), download and save it to your computer. Then in RStudio go to the Tools menu item and select the "Install Packages" item from the drop-down menu. In the box that opens up, choose "Package Archive File" in the "Install from:" section. Then under "Package archive:" click the "Browse" button and navigate to where you saved the downloaded package archive. You can safely ignore the "Install to Library:" section and just click on the "Install" button. It should then install for you with no issues. 
 
-To run R and RStudio for this workshop on Binder (with all packages pre-installed), click on this badge - [![Launch Rstudio Binder](http://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/IdoBar/6003ESC_workshops_binder/main?urlpath=rstudio){target="_blank"}.
+To run R and RStudio for this workshop on Binder (with all packages pre-installed), click on this badge - [![Launch Rstudio Binder](https://static.mybinder.org/badge_logo.svg){width=125px}](https://mybinder.org/v2/gh/IdoBar/6003ESC_workshops_binder/main?urlpath=rstudio){target="_blank"}.
 
 If for some reason there are issues with installing the binary for your OS, try downlowding and saving the source package instead (xxx.tar.gz). Use the same process as described in the previous paragraph to install it. If you are still having issues, contact me (j.mcbroom@griffith.edu.au) as soon as possible.
 
