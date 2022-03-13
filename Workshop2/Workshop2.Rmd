@@ -2,7 +2,7 @@
 title: "Tutorial for Workshop 2 - Descriptive Statistics"
 subtitle: "Scientific Data Analysis 6003ESC" 
 author: "Dr. Ido Bar"
-date: "23/07/2021"
+date: "28/03/2022"
 output: 
     html_document:
 #      css: "style/style.css"
@@ -104,10 +104,6 @@ We can also produce some descriptive statistics to better understand the data an
 ```{r summary}
 # summary of variables in my data
 summary(gapdata)
-```
-
-```{r stats-tweet, fig.cap=figs(name="stats_mem")}
-include_tweet("https://twitter.com/geotheory/status/1299766175354757121")
 ```
 
 If we want to see how it can be used to summarise nominal (categorical) data, we can apply it on the same data, but that had been imported using the `read.csv()` function, that automatically converts text columns into factors, which are vectors of strings/characters with predefined categories (*note that this is no longer the default behaviour in R versions >4.0*).  
@@ -224,7 +220,7 @@ ggplot(gapdata, aes(x=continent, y=lifeExp, colour=continent)) +
 Another option to show the distribution of data points, along with some descriptive statistics, is by using "Raincloud Plots", which can convey a lot of useful information.
 See details in **Visualizing Distributions with Raincloud Plots** using ggplot2 ([blog post](https://www.cedricscherer.com/2021/06/06/visualizing-distributions-with-raincloud-plots-with-ggplot2/){target="_blank"})
 ```{r raincloud_tweet}
-include_tweet("https://twitter.com/CedScherer/status/1401604888900083713?s=20")
+tweet_embed("https://twitter.com/CedScherer/status/1401604888900083713?s=20")
 ```
 
 ### Interactive exploration
@@ -261,7 +257,7 @@ knitr::include_graphics(here("figs/Rstudio_export_screenshot.png"))
 * **Beautiful plotting in R**: A ggplot2 cheatsheet -- provides lots of recipes and easy fixes for common tasks when creating `ggplot2` plots ([link](http://zevross.com/blog/2014/08/04/beautiful-plotting-in-r-a-ggplot2-cheatsheet-3/){target="_blank"})  
 * **The Evolution of a ggplot** -- a series of tutorials to create beautiful and informative plots in R ([link](https://www.cedricscherer.com/2019/05/17/the-evolution-of-a-ggplot-ep.-1/){target="_blank"})   
 ```{r ggplot_evol}
-include_tweet("https://twitter.com/WeAreRLadies/status/1280859374668283906")
+tweet_embed("https://twitter.com/WeAreRLadies/status/1280859374668283906")
 ```
 * [paletteer](https://github.com/EmilHvitfeldt/paletteer){target="_blank"} -- An R package that lets you use colour palette from a range of available packages (see examples of available palettes [here](https://github.com/EmilHvitfeldt/r-color-palettes){target="_blank"})  
 * **Plot anything with ggplot2** - [YouTube workshops](https://www.youtube.com/watch?v=h29g21z0a68){target="_blank"} 

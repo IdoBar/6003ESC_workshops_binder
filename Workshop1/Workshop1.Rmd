@@ -2,7 +2,7 @@
 title: "Scientific Data Analysis 6003ESC"
 subtitle: "Tutorial for Workshop 1"
 author: "Dr. Ido Bar"
-date: "23/07/2021"
+date: "14/03/2022"
 output: 
     html_document:
 #      css: "style/style.css"
@@ -58,7 +58,9 @@ print("Hello World!")
 
 ## `r  fa("r-project", fill = "#384CB7")`
 
-R is a programming language and free software environment for statistical computing and graphics supported by the R Foundation for Statistical Computing. The R language is widely used among statisticians and data miners for developing statistical software and data analysis.
+R is a programming language and free software environment for statistical computing and graphics supported by the R Foundation for Statistical Computing (see the [R homepage](https://www.r-project.org/){target="_blank"}). The R language is widely used among statisticians and data miners for developing statistical software and data analysis. R can be installed from the Comprehensive R Archive Network (CRAN), via this [link](https://cloud.r-project.org/){target="_blank"} (choose the appropriate download for your operating system) or you can choose the R distribution offered by Microsoft (R Open), which is based on a slightly older R version, but offers additional capabilities for performance, reproducibility and platform support (can be downloaded [here](https://mran.microsoft.com/download){target="_blank"}).
+
+Windows users should also install [Rtools](https://cran.r-project.org/bin/windows/Rtools/rtools40.html){target="_blank"} to be able to compile and install packages from source code (a requirement for some packages).
 
 ### RStudio
 
@@ -67,7 +69,7 @@ RStudio is a set of integrated tools designed to help you be more productive wit
 ### Using R and RStudio from Cloud services
 If we want to keep things simple (for this course) or we would like to use R on shared computers, where we can't install software, we can run R and Rstudio through a web client that is hosted on a remote server.  
 We will use the [Binder](https://mybinder.org/){target="_blank"} service, which is free, easy to use and can be launched from a single GitHub repository (more about this in the workshop).  
-R and RStudio can also be run on [EcoCloud](https://ecocloud.org.au/){target="_blank"}, another cloud-based service free for Griffith students and oriented at ecology modeling and integration of external databases.
+R and RStudio can also be run on [EcoCloud](https://ecocloud.org.au/){target="_blank"}, another cloud-based service free for Griffith students and oriented at ecology modeling and integration of external databases or at [Rstudio.cloud](https://rstudio.cloud){target="_blank"}, which has a tiered subscription based access (see [plans](https://rstudio.cloud/plans/compare){target="_blank"})
 
 #### Running R and RStudio on Binder
 Using Binder is as simple as clicking on the Binder badge - [![Launch Rstudio Binder](../figs/binder_logo.png){width=125px}](https://mybinder.org/v2/gh/IdoBar/6003ESC_workshops_binder/main?urlpath=rstudio){target="_blank"}.  
@@ -98,7 +100,7 @@ Regardless whether we installed R and RStudio locally or we use the Binder servi
 
 >1. Start RStudio by clicking on its icon.  
 2. Start a new project by selecting "File --> New Project" or clicking on the "New Project" icon (under "Edit" in the taskbar).  
-3. Select "New Directory --> New Project" and then enter "Workshop1" in the Directory name text box and browse to the "wrokspace" folder to create the project folder in (see screenshots A-D in `r figs(name="rstudio_project",display="cite")` below)
+3. Select "New Directory --> New Project" and then enter "Workshop1" in the Directory name text box and browse to the "workspace" folder to create the project folder in (see screenshots A-D in `r figs(name="rstudio_project",display="cite")` below)
  
 ```{r rstudio_proj, echo=FALSE, fig.cap=figs(name="rstudio_project"), out.width = '100%'}
 knitr::include_graphics(here("figs/RStudio_create_project.png"))
@@ -274,17 +276,20 @@ Please contact me at i.bar@griffith.edu.au for any questions or comments.
 
 ## Additional Resources
 
-* **R WTF**: What They Forgot to tell you about R, tips and best practices for working in R ([link](https://rstats.wtf/){target="_blank"})  
-* **R for Reproducible Scientific Analysis: A Software Carpentry course** -- https://swcarpentry.github.io/r-novice-gapminder/ (offered regularly here at GU, follow [\@hackyhourGU](https://twitter.com/hackyhourGU){target="_blank"} on Twitter)  
+* **Introduction to R** -- [online notes](https://monashdatafluency.github.io/r-intro-2/index.html){target="_blank"} of a course taught by Monash Bioinformatics Platform 
+* **Awesome R** -- A curated list of awesome R packages and tools, see the [GitHub repository](https://github.com/qinwf/awesome-R){target="_blank"}
+* **YaRrr! The Pirate’s Guide to R** -- Yet another great introductory [online book on R](https://bookdown.org/ndphillips/YaRrr/){target="_blank"}
+* **What They Forgot to tell you about R** -- Tips and best practices for working in R ([R WTF](https://rstats.wtf/){target="_blank"})  
+* **R for Reproducible Scientific Analysis: A Software Carpentry course** -- <https://swcarpentry.github.io/r-novice-gapminder/> (offered regularly here at GU, follow [\@hackyhourGU](https://twitter.com/hackyhourGU){target="_blank"} on Twitter)  
 * **From Data to Viz** leads you to the most appropriate graph for your data -- https://www.data-to-viz.com/  
-* [Coding Club](https://ourcodingclub.github.io/){target="_blank"}: A Positive Peer-Learning Community (ecology and environmental science students and researchers from the University of Edinburgh) -- https://ourcodingclub.github.io/  (I run our very own Coding Club here at Griffith, ask me if you want to join)
-* **Beautiful plotting in R: A ggplot2 cheatsheet** -- provides lots of recipes and easy fixes for common tasks when creating `ggplot2` plots [link](http://zevross.com/blog/2014/08/04/beautiful-plotting-in-r-a-ggplot2-cheatsheet-3/){target="_blank"}   
-* **Plot anything with ggplot2** - [YouTube workshops](https://www.youtube.com/watch?v=h29g21z0a68){target="_blank"} 
-* Useful cheatsheets can be found on the [RStudio Cheatsheets website](https://rstudio.com/resources/cheatsheets/){target="_blank"} (start with the most useful/basic ones relevant to this course - **RStudio IDE, Data Import, Data Transformation and Data Visualization**)  
-* [paletteer](https://github.com/EmilHvitfeldt/paletteer){target="_blank"} -- An R package that lets you use colour palette from a huge range of available packages (see examples of available palettes [here](https://github.com/EmilHvitfeldt/r-color-palettes){target="_blank"} and you can even use [TV-themed palettes](https://github.com/Ryo-N7/tvthemes){target="_blank"}) 
+* **Coding Club** -- A Positive Peer-Learning Community (ecology and environmental science students and researchers from the University of Edinburgh), [link](https://ourcodingclub.github.io/){target="_blank"} (I run our very own Coding Club here at Griffith, ask me if you want to join)
+* **Beautiful plotting in R: A ggplot2 cheatsheet** provides lots of recipes and easy fixes for common tasks when creating `ggplot2` plots [link](http://zevross.com/blog/2014/08/04/beautiful-plotting-in-r-a-ggplot2-cheatsheet-3/){target="_blank"}   
+* **Plot anything with ggplot2** -- [YouTube workshops](https://www.youtube.com/watch?v=h29g21z0a68){target="_blank"} 
+* Useful cheatsheets can be found on the [RStudio Cheatsheets website](https://rstudio.com/resources/cheatsheets/){target="_blank"} (start with the most useful/basic ones relevant to this course: RStudio IDE, Data Import, Data Transformation and Data Visualization)  
+* **paletteer** -- An R package ([GitHub repo](https://github.com/EmilHvitfeldt/paletteer){target="_blank"}) that lets you choose colour palettes from a huge range of available packages (see examples of available palettes [here](https://github.com/EmilHvitfeldt/r-color-palettes){target="_blank"} and you can even use [TV-themed palettes](https://github.com/Ryo-N7/tvthemes){target="_blank"}) 
 
 ```{r bluey-tweet}
-include_tweet("https://twitter.com/DrIdoBar/status/1272919164252897286")
+tweetrmd::tweet_embed("https://twitter.com/DrIdoBar/status/1272919164252897286")
 ```
 
 

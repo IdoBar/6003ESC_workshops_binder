@@ -2,7 +2,7 @@
 title: "Tutorial for Lecture 3 - Analysis of COVID-19 Data"
 subtitle: "Scientific Data Analysis 6003ESC" 
 author: "Dr. Ido Bar"
-date: "02/08/2021"
+date: "04/04/2022"
 output: 
     html_document:
       css: "style/style.css"
@@ -102,20 +102,20 @@ More information on installing and using R packages can be found in this [tutori
 
 Now that we've got RStudio up and running and our packages installed and loaded, we can read data into R from our local computer or from web locations using dedicated functions specific to the file type (`.csv`, `.txt`, `.xlsx`, etc.). 
 
-We will use the `read_csv()` command/function from the `readr` package (part of the `tidyverse`) to load the data directly from a file on the the [Our World in Data](https://ourworldindata.org/covid-vaccinations){target="_blank"} website into a variable of type **data frame** (table). If we don't want to use external packages, we can use the `read.csv()` function from base R, which won't automatically parse columns containing dates and in previous versions of R (< 4.0) will slightly change the structure of the resulting data frame (all text columns will be converted into factors).  
+We will use the `read_csv()` command/function from the `readr` package (part of the `tidyverse`) to load the data directly from a file on the [Our World in Data](https://ourworldindata.org/covid-vaccinations){target="_blank"} website into a variable of type **data frame** (table). If we don't want to use external packages, we can use the `read.csv()` function from base R, which won't automatically parse columns containing dates and in previous versions of R (< 4.0) will slightly change the structure of the resulting data frame (all text columns will be converted into factors).  
 > Note that in this case, we need to specify the column types because the data contains a lot of missing values that interfere with the automatic parsing of the column types._
 
 ```{r read_data}
 # read data from Our World in Data website
 covid_data <- read_csv("https://covid.ourworldindata.org/data/owid-covid-data.csv", 
                        col_types = paste(c("c", "f", "c", "D", rep("d", 29), 
-                                           "c", rep("d", 26)), collapse = ""))
+                                           "c", rep("d", 33)), collapse = ""))
 
 ```
 
 ### Data Exploration
 
-Let's use built-in functions for a brief data exploration, such as `head()` to show the first 10 rows of the data and `str()` for the type of data in each column:
+Let's use built-in functions for a brief data exploration, such as `head()` to show the first 10 rows of the data and `str()` for the type of data in each column (see detailed information on each variable in the [data repository on GitHub](https://github.com/owid/covid-19-data/tree/master/public/data){target="_blank"}):
 
 ```{r explore_data}
 #explore the data frame
@@ -250,7 +250,7 @@ ggplot(most_affected_data, aes(x=date, y=people_vaccinated, colour=Country)) +
   scale_x_date(NULL,
                breaks = breaks_width("2 months"), 
                labels = label_date_short()) + 
-  labs(color="Country") +
+  labs(color="Country", y="People Vaccinated") +
   theme_bw(def_text_size) + 
   theme(panel.grid.minor = element_blank())
 ```
@@ -322,15 +322,15 @@ Now let's try to compare this to vaccination rates
 ```{r vacc_rates}
 # total vaccination per population
 p2 <- ggplot(hosp_data, 
-             aes(x=date, y = people_fully_vaccinated_per_hundred ,colour=location)) +
+             aes(x=date, y = people_fully_vaccinated_per_hundred/100 ,colour=location)) +
   geom_line(size=0.75, linetype="dashed") + 
   guides(color = guide_legend(override.aes = list(linetype="solid") ) ) +
-  scale_y_continuous(labels=comma) + 
+  scale_y_continuous(labels=percent) + 
   scale_color_paletteer_d(col_pal) +
   scale_x_date(name = NULL,
                breaks = breaks_width("2 months"), 
                labels = label_date_short()) + 
-  labs(color="Country", y = "Fully vaccinated (per hundred)") +
+  labs(color="Country", y = "Fully vaccinated (percent)") +
   theme_bw(def_text_size) + 
   theme(panel.grid.minor = element_blank())
 p2
@@ -338,7 +338,15 @@ p2
 
 What will be the best way to compare these values?
 ```{r compare_hosp_vacc}
-(p1 + guides(color=FALSE))+ p2 + plot_layout(guides = 'collect')# show graphs side by side
+p1_narrow <- p1 + guides(color=FALSE) +
+  scale_x_date(name = NULL,
+               breaks = breaks_width("4 months"), 
+               labels = label_date_short())
+p2_narrow <- p2 +
+  scale_x_date(name = NULL,
+               breaks = breaks_width("4 months"), 
+               labels = label_date_short())
+(p1_narrow + guides(color=FALSE))+ p2_narrow + plot_layout(guides = 'collect')# show graphs side by side
 ```
 
 Maybe like this:
@@ -353,19 +361,19 @@ There's a lot of empty "real estate" in the vaccination graph, maybe we could tr
 
 ```{r compare3}
 p3 <- ggplot(hosp_data, 
-             aes(x=date, y = people_fully_vaccinated_per_hundred ,colour=location)) +
+             aes(x=date, y = people_fully_vaccinated_per_hundred/100 ,colour=location)) +
   geom_line(size=0.75, linetype="dashed") +
   guides(color = guide_legend(override.aes = list(linetype="solid") ) ) +
-  scale_y_continuous(labels=comma) + 
+  scale_y_continuous(labels=percent) + 
   scale_color_paletteer_d(col_pal) +
   scale_x_date(name = NULL,
                limits = c(dmy("01-01-2021"), NA),
-               breaks = breaks_width("2 months"), 
+               breaks = breaks_width("6 months"), 
                labels = label_date_short()) + 
-  labs(color="Country", y = "Fully vaccinated (per hundred)") +
+  labs(color="Country", y = "Fully vaccinated (percent)") +
   theme_bw(def_text_size) + 
   theme(panel.grid.minor = element_blank())
-(p1 + guides(color=FALSE)) + p3 + plot_layout(guides = 'collect', widths = c(2, 1)) # maybe like this?
+(p1_narrow + guides(color=FALSE)) + p3 + plot_layout(guides = 'collect', widths = c(2, 1)) # maybe like this?
 ```
 
 Let's try to present them on the same graph (note the trick with the secondary y-axis).
@@ -400,8 +408,6 @@ p4 +
   facet_wrap(~location)
 ```
 
-Anything to worry about???
-
 Save the plot to a folder.
 ```{r save_plot, eval=FALSE}
 # create output folder
@@ -431,6 +437,12 @@ ggsave("output/hospit_vacc_rates_facet_country.pdf", width=14, height = 8)
 * **The R graph gallery** - From the creator of "Data to Viz" - a comprehensive gallery of R charts, with reproducible code examples ([link](https://www.r-graph-gallery.com/index.html){target="_blank"})
 * **COVID-19 vaccination data** in [Our World in Data site](https://ourworldindata.org/covid-vaccinations){target="_blank"}
 * My very own [COVID-19 dashboard](https://idobar.github.io/covid19-dash/){target="_blank"} (created in R, needs updating)
+
+### Now take the plunge and start practicing with your own data!!
+
+```{r r-practice-tweet}
+tweet_embed("https://twitter.com/YannisMarkonis/status/1276211134186602499")
+```
 
 ## Contact 
 
