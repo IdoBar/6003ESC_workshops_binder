@@ -45,13 +45,13 @@ $(document).ready(function() {
 
 ```{r setup, include=FALSE}
 # pacman::p_load(captioner, paletteer, highcharter, countrycode, plotly, readxl, tidyverse, here, scales, lubridate)
-required_packages <- c("dplyr", "ggplot2", "paletteer", "stringr",
-                       "readr","readxl", "glue",
-                       "forcats", "tidyr",
-                       "highcharter", "scales",  "plotly", 
-                       "lubridate", "here","ISOweek", "countrycode")
+# required_packages <- c("dplyr", "ggplot2", "paletteer", "stringr",
+#                        "readr","readxl", "glue",
+#                        "forcats", "tidyr",
+#                        "highcharter", "scales",  "plotly", 
+#                        "lubridate", "here","ISOweek", "countrycode")
 # pacman::p_load(char=required_packages)
-pacman::p_load(dplyr, tidyr, ggplot2, readr,  paletteer, glue, scales, plotly, lubridate, patchwork, visdat)
+pacman::p_load(tidyverse,  paletteer, glue, scales, plotly, lubridate, patchwork, visdat)
 pacman::p_load_gh("gadenbuie/tweetrmd")
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -92,7 +92,7 @@ To install these packages, we will introduce a package called [pacman](https://t
 install.packages('pacman')
 # load required packages
 library(pacman)
-p_load(dplyr, tidyr, ggplot2, readr,  paletteer, glue, scales, plotly, lubridate, patchwork, visdat)
+p_load(tidyverse,  paletteer, glue, scales, plotly, lubridate, patchwork, visdat)
 
 ```
 
@@ -171,7 +171,7 @@ Let's look at confirmed cases and total deaths data for the 10 most affected cou
   b. Then we group it by location with `group_by()`
   c. Then we sort it _within each location_ by date (from latest to earliest) with `arrange(desc(date))`
   d. We select just the most recent data point from each location with `slice(1)` and remove grouping with `ungroup()`
-  e. Next we arrange it by descending order of total deaths and select the top 10 observations (one for each location)  
+  e. Next we arrange it by descending order of total cases and select the top 10 observations (one for each location)  
   f. Finally, we subset our original data to contain just the countries from our vector with `inner_join()`
 
 Optional step:
@@ -184,7 +184,7 @@ Then we can look at the data as a table and make a plot with the number of cases
 latest_data <- covid_data %>% filter(!is.na(continent)) %>% 
   group_by(location) %>% arrange(desc(date)) %>% slice(1) %>% ungroup() 
 most_affected_countries <- latest_data  %>%  
-  arrange(desc(total_deaths)) %>% slice(1:10) %>% 
+  arrange(desc(total_cases)) %>% slice(1:10) %>% 
   select(location)
 
 # subset just the data from the 10 most affected countries and order them from the most affected to the least one
@@ -192,7 +192,7 @@ most_affected_data <- covid_data %>%
   inner_join(most_affected_countries) %>% 
   mutate(Country=factor(location, levels = most_affected_countries$location))
 
-# create a line plot the data of total cases
+# create a line plot the data of total deaths
 ggplot(most_affected_data, aes(x=date, y=total_cases, colour=Country)) +
   geom_line(size=0.75) + scale_y_continuous(labels=comma) + 
   scale_color_paletteer_d("rcartocolor::Bold") +
@@ -336,47 +336,14 @@ p2 <- ggplot(hosp_data,
 p2
 ```
 
-What will be the best way to compare these values?
-```{r compare_hosp_vacc}
-p1_narrow <- p1 + guides(color=FALSE) +
-  scale_x_date(name = NULL,
-               breaks = breaks_width("4 months"), 
-               labels = label_date_short())
-p2_narrow <- p2 +
-  scale_x_date(name = NULL,
-               breaks = breaks_width("4 months"), 
-               labels = label_date_short())
-(p1_narrow + guides(color=FALSE))+ p2_narrow + plot_layout(guides = 'collect')# show graphs side by side
-```
+What will be the best way to compare these values? Maybe like this:
 
-Maybe like this:
 ```{r compare2}
 (p1 + guides(color=FALSE)) / (p2 + theme(legend.position = "bottom")) #+ plot_layout(guides = 'collect')# show graphs on top of each other
 ```
 
-Any suggestions?
-```{fold}
-There's a lot of empty "real estate" in the vaccination graph, maybe we could trim off 2020?
-```
-
-```{r compare3}
-p3 <- ggplot(hosp_data, 
-             aes(x=date, y = people_fully_vaccinated_per_hundred/100 ,colour=location)) +
-  geom_line(size=0.75, linetype="dashed") +
-  guides(color = guide_legend(override.aes = list(linetype="solid") ) ) +
-  scale_y_continuous(labels=percent) + 
-  scale_color_paletteer_d(col_pal) +
-  scale_x_date(name = NULL,
-               limits = c(dmy("01-01-2021"), NA),
-               breaks = breaks_width("6 months"), 
-               labels = label_date_short()) + 
-  labs(color="Country", y = "Fully vaccinated (percent)") +
-  theme_bw(def_text_size) + 
-  theme(panel.grid.minor = element_blank())
-(p1_narrow + guides(color=FALSE)) + p3 + plot_layout(guides = 'collect', widths = c(2, 1)) # maybe like this?
-```
-
-Let's try to present them on the same graph (note the trick with the secondary y-axis).
+Any other suggestions?
+Let's try to present them on the same graph (note the trick with the **secondary y-axis**).
 
 ```{r secondary_y}
 # show on the same graph
@@ -397,7 +364,7 @@ p4 <- ggplot(hosp_data,
 p4
 ```
 
-Probably best to present them on the same graph (note the trick with the secondary y-axis), but for each country separately (done with the `facet_wrap()` function).
+Probably best to present them on the same graph, but for each country separately (done with the `facet_wrap()` function).
 
 ```{r secondary_y_facet}
 # show on the same graph, but separate each country
@@ -408,7 +375,8 @@ p4 +
   facet_wrap(~location)
 ```
 
-Save the plot to a folder.
+Save the plot to a file.
+
 ```{r save_plot, eval=FALSE}
 # create output folder
 dir.create("./output", showWarnings = FALSE)
@@ -416,6 +384,40 @@ dir.create("./output", showWarnings = FALSE)
 ggsave("output/hospit_vacc_rates_facet_country.pdf", width=14, height = 8)
 ```
 
+Look at the vaccination rates compared to the European average:
+
+```{r EU_hosp_delta}
+# subset our original data to our countries + Europe (European average)
+EU_hosp_data <- covid_data %>% filter(location %in% c(countries_subset, "Europe")) 
+# Get the EU average vacc. rates
+EU_vac_data <- covid_data %>% filter(location=="Europe") %>% select(date, EU_fully_vacc_percent=people_fully_vaccinated_per_hundred)
+# create a new calculated column with the difference from the EU average
+comp_vac_data <- EU_hosp_data %>% left_join(EU_vac_data) %>% 
+  mutate(fully_vacc_change=people_fully_vaccinated_per_hundred-EU_fully_vacc_percent,
+         location=fct_relevel(factor(location), "Europe", after = Inf)) %>% 
+  filter(date>"2021-01-01") 
+
+ggplot(comp_vac_data, 
+             aes(x=date, y = fully_vacc_change/100 ,colour=location)) +
+  geom_line(size=0.75, linetype="dashed") + 
+  guides(color = guide_legend(override.aes = list(linetype="solid") ) ) +
+  scale_y_continuous(labels=percent) + 
+  scale_color_paletteer_d(col_pal) +
+  scale_x_date(name = NULL,
+               breaks = breaks_width("2 months"), 
+               labels = label_date_short()) + 
+  labs(color="Country", y = "Fully vaccinated (in comparison to the EU average)") +
+  theme_bw(def_text_size) + 
+  theme(panel.grid.minor = element_blank())
+
+```
+
+Save the plot to a file.
+
+```{r save_plot2, eval=FALSE}
+# save the plot to pdf file
+ggsave("output/hospit_vacc_rates_EU_average.pdf", width=12, height = 8)
+```
 
 #### Questions
 1. What other variables we could analyse? 
@@ -431,11 +433,12 @@ ggsave("output/hospit_vacc_rates_facet_country.pdf", width=14, height = 8)
 
 ## Additional Resources
 
-* **Johns Hopkins University Center for Systems Science and Engineering** (JHU CSSE) [data repository](https://github.com/CSSEGISandData/COVID-19){target="_blank"} and [website](https://systems.jhu.edu/research/public-health/ncov/){target="_blank"}
-* **EU 14-days COVID-19 data** for download in CSV/Excel format [link](https://www.ecdc.europa.eu/en/publications-data/data-national-14-day-notification-rate-covid-19){target="_blank"} 
 * **Be awesome in ggplot2: A Practical Guide to be Highly Effective** -- R software and data visualization ([link](http://www.sthda.com/english/wiki/be-awesome-in-ggplot2-a-practical-guide-to-be-highly-effective-r-software-and-data-visualization){target="_blank"})  
 * **The R graph gallery** - From the creator of "Data to Viz" - a comprehensive gallery of R charts, with reproducible code examples ([link](https://www.r-graph-gallery.com/index.html){target="_blank"})
+* **Themes to Improve Your ggplot Figures** - <https://rfortherestofus.com/2019/08/themes-to-improve-your-ggplot-figures/>{target="_blank"}
 * **COVID-19 vaccination data** in [Our World in Data site](https://ourworldindata.org/covid-vaccinations){target="_blank"}
+* **Johns Hopkins University Center for Systems Science and Engineering** (JHU CSSE) [data repository](https://github.com/CSSEGISandData/COVID-19){target="_blank"} and [website](https://systems.jhu.edu/research/public-health/ncov/){target="_blank"}
+* **EU 14-days COVID-19 data** for download in CSV/Excel format [link](https://www.ecdc.europa.eu/en/publications-data/data-national-14-day-notification-rate-covid-19){target="_blank"} 
 * My very own [COVID-19 dashboard](https://idobar.github.io/covid19-dash/){target="_blank"} (created in R, needs updating)
 
 ### Now take the plunge and start practicing with your own data!!
