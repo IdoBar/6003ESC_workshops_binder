@@ -32,6 +32,6 @@ dependencies:
   - r-pastecs
   - r-rmisc
   - r-esquisse
-  - r-fontawesome
+  # - r-fontawesome
   - pandoc
  # - libgcc
