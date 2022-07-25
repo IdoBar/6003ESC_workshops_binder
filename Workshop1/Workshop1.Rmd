@@ -16,7 +16,8 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-pacman::p_load(htmltools, knitr, tidyverse, captioner, fontawesome, here, gtsummary)
+pacman::p_load(htmltools, knitr, tidyverse, fontawesome, 
+               here, esquisse)
 pacman::p_load_gh("gadenbuie/tweetrmd",
                   "hadley/emo")
 # pacman::p_load_gh("mitchelloharawild/icons", update = FALSE)
@@ -109,7 +110,7 @@ To install these packages, we use the `install.packages('package')` command, ple
 ```{r install_packages, eval=FALSE}
 # install required packages - needed only once! (comment with a # after first use)
 install.packages("tidyverse")
-install.packages("here")
+install.packages("esquisse")
 # It seems like there is a problem with some versions of the `tibble` package, which we can overcome by installing the most recent development version
 install.packages("remotes")
 remotes::install_github("tidyverse/tibble")
@@ -124,6 +125,7 @@ We will use the `read_csv()` command/function from the `readr` package (part of 
 ```{r read_data, message=FALSE, warning=FALSE}
 # load required packages
 library(tidyverse)
+library(esquisse)
 # Read data straight from the web
 gapminder <- read_csv("https://tinyurl.com/gapdata")
 ```
@@ -205,6 +207,7 @@ We just need a few more final touches to make it "publication-ready" (in the sam
 * Changing the resolution of the years in the X-axis
 * Adding a title to the plot (though the caption below should suffice in scientific publications) and correcting the X and Y labels and legend title (note that we actually change the label of `color` aesthetic for that). 
 
+We can use the `equisser()` function to interactively create this plot.  
 The final result can be seen in Figure \@ref(fig:expct-per-year4).  
 
 ```{r expct-per-year4, include=TRUE, echo=TRUE, fig.cap="Life expectancy by years in Asian countries (beautify the plot with themes, colour palettes and labels).", out.width = '80%'}

@@ -2,7 +2,7 @@
 title: "Tutorial for Workshop 2 - Descriptive Statistics"
 subtitle: "Scientific Data Analysis 6003ESC" 
 author: "Dr. Ido Bar"
-date: "28/03/2022"
+date: "01/08/2022"
 output: 
     html_document:
 #      css: "style/style.css"
@@ -15,29 +15,12 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-pacman::p_load(tidyverse, captioner, ggpubr, paletteer, fontawesome, here, plotly)
+pacman::p_load(tidyverse, ggpubr, paletteer, fontawesome, 
+               here, plotly, gtsummary, esquisse)
 pacman::p_load_gh("gadenbuie/tweetrmd")
 # pacman::p_load_gh("mitchelloharawild/icons", update = FALSE)
 knitr::opts_chunk$set(echo = TRUE, fig.align='center')
-# setup figure and table captions
-figs <- captioner(prefix="Figure")
-tbls <- captioner(prefix="Table")
-figs(name="binder_export", "Download files from Binder/RStudio screenshot.")
-figs(name="stats_mem","Decriptive statistics meme.")
-figs(name="cont_histo","Histogram of continent data.")
-figs(name="lifeExp_histo","Histogram of life expectancy data.")
-figs(name="lifeExp_histo2","Histogram of life expectancy data by continent.")
-figs(name="density","Density plot of life expectancy data by continent.")
-figs(name="boxplots","Box plots of life expectancy data by continent.")
-figs(name="violin","Violin plots of life expectancy data by continent.")
-figs(name="violin_box","Combined violin and box plots of life expectancy data by continent.")
-figs(name="interactive_boxplots","Interactive box plots of life expectancy data by continent (powered by Plotly).")
-
-# figs(name="asia_lifexpct4","Life expectancy by years in Asian countries (beautify the plot with themes, colour palettes and labels).") 
-# figs(name="gdp_life","Relationship between GDP per capita and life expectancy by continent")
-# figs(name="gdp_life_log","Relationship between GDP per capita and life expectancy by continent (log-scaled X-axis")
-# figs(name="ggplot2_layers","A visualisation of the layer concept in 'ggplot2' package (starting from bottom up, credit to [Coding Club](https://ourcodingclub.github.io/tutorials/dataviz-beautification-synthesis/#distributions)).")
-# figs(name="GOT_palette", "An example of a 'ggplot2' theme inspired by Game of Thrones ([tvthemes package](https://github.com/Ryo-N7/tvthemes))")
+devtools::source_gist("7f63547158ecdbacf31b54a58af0d1cc", filename = "util.R")
 ```
 
 
@@ -112,7 +95,22 @@ If we want to see how it can be used to summarise nominal (categorical) data, we
 # apply summary on data imported with read.csv(), what are the differences?
 summary(read.csv("https://tinyurl.com/gapdata", stringsAsFactors = TRUE))
 ```
-We can see that when a variable is defined as a factor (contains categories), `summary()` will automatically summarise and count how many times wach category appears in the data.
+We can see that when a variable is defined as a factor (contains categories), `summary()` will automatically summarise and count how many times each category appears in the data.
+
+<!-- You can see below in Table \@ref(tab:fancy-summary) an example of the output of [gtsummary](https://www.danieldsjoberg.com/gtsummary){target="_blank"} package, which provides advanced options for creating summary tables of the data. -->
+<!-- ```{r fancy-summary, results='asis'} -->
+<!-- # install.packages(gtsummary) -->
+<!-- # summary of variables in my data -->
+<!-- library(gtsummary) # -->
+<!-- DT_caption("fancy-summary", caption = "Summary of Gap Data by continent.") -->
+<!-- gapdata %>% select(-country) %>%  -->
+<!--   tbl_summary(by = continent, -->
+<!--               statistic = list(all_continuous() ~ "{mean} ({sd})", -->
+<!--                                all_categorical() ~ "{n} / {N} ({p}%)"), -->
+<!--               label = list(year ~ "Year", pop ~ "Population", lifeExp ~ "Life Expectancy", gdpPercap ~ "GDP per Capita"), -->
+<!--               digits = all_continuous() ~ 0) %>% add_p()  -->
+
+<!-- ``` -->
 
 We can also sort the data to look at extreme values. As opposed to using `summary()`, `max()` or `min()`, this way we see all the values in the other columns, so we can see not only the minimal recorded _lifeExp_, but also in which country and at which year it was observed.
 
@@ -134,24 +132,24 @@ We have two character categorical variables, _country_ and _continent_ and 4 num
 ### Histogram
 A histogram counts how many observations we have from each value and lets us assess how the data is distributed. When applied to categorical data, it shows us a graphic visualisation of the same output as running `gapdata %>% dplyr::count(continent)` (I'm using the double colon `::` to tell R to use the `count()` function from `dplyr` package).  
 
-```{r histo_continent, fig.cap=figs(name="cont_histo")}
+```{r histo_continent, fig.cap="Histogram of continent data."}
 gapdata %>% dplyr::count(continent)
 ggplot(gapdata, aes(x=continent, fill=continent)) +
   geom_histogram(stat = "count", width=0.8) +
   scale_fill_brewer(palette = "Set1") + theme_bw(16)
 ```
 
-The real power of a histogram though comes when we apply it to a continuous numerical variable. However, when the data is truly continuous, the range need to be divided to "bins" into which each observation falls and then the sum of observation in each bin is presented.  
+The real power of a histogram though comes when we apply it to a continuous numerical variable. However, when the data is truly continuous, the range need to be divided to "bins" into which each observation falls and then the sum of observation in each bin is presented (Figure \@ref(fig:histo-numeric)).  
 
-```{r histo_numeric, fig.cap=figs(name="lifeExp_histo")}
+```{r histo-numeric, fig.cap="Histogram of life expectancy data."}
 ggplot(gapdata, aes(x=lifeExp)) +
   geom_histogram(fill="lightskyblue") +
   theme_bw(16)
 ```
 
-We can increase the number of bins for higher resolution, or decrease it for a more coarse look.  We can also colour each continent to get a better understanding of the distribution of values from each continent.  
+We can increase the number of bins for higher resolution, or decrease it for a more coarse look.  We can also colour each continent to get a better understanding of the distribution of values from each continent (Figure \@ref(fig:histo-numeric2)).  
 
-```{r histo_numeric2, fig.cap=figs(name="lifeExp_histo2")}
+```{r histo-numeric2, fig.cap="Histogram of life expectancy data by continent."}
 ggplot(gapdata, aes(x=lifeExp, fill=continent)) +
   geom_histogram(bins = 100) +
   scale_fill_brewer(palette = "Set2") +
@@ -162,9 +160,9 @@ Can you try and plot a histogram of the years, what type of data is it based on 
 
 #### Density Plots
 
-Another variant of the histogram is a density plot, which is a "smoothed" version of the histogram. If we apply some transparency to the fill colour (using the `alpha=0.5` argument), we can see where the data from the continents overlap (see `r figs(name="density", display="cite")`) .
+Another variant of the histogram is a density plot, which is a "smoothed" version of the histogram. If we apply some transparency to the fill colour (using the `alpha=0.5` argument), we can see where the data from the continents overlap (Figure \@ref(fig:density)) .
 
-```{r density, fig.cap=figs(name="density")}
+```{r density, fig.cap="Density plot of life expectancy data by continent."}
 ggplot(gapdata, aes(x=lifeExp, fill=continent)) +
   geom_density(alpha=0.5) +
   scale_fill_brewer(palette = "Dark2") +
@@ -174,10 +172,10 @@ ggplot(gapdata, aes(x=lifeExp, fill=continent)) +
 
 ### Boxplot
 
-A more detailed method to look at distribution of continuous numerical data is using a boxplot. These are visual representations of the descriptive statistics provided by `summary()` command. Each boxplot visualises five summary statistics (the median, two hinges and two whiskers), and all "outlying" points individually. The hinges (top and bottom of box) represent the range between the 25%-75% quantiles, while the length whiskers represent 1.5*IQR (interquantile range) from the hinges. Data points that fall outside this range are considered "outliers" and are plotted individually.
+A more detailed method to look at distribution of continuous numerical data is using a boxplot. These are visual representations of the descriptive statistics provided by `summary()` command. Each boxplot visualises five summary statistics (the median, two hinges and two whiskers), and all "outlying" points individually. The hinges (top and bottom of box) represent the range between the 25%-75% quantiles, while the length whiskers represent 1.5*IQR (interquantile range) from the hinges. Data points that fall outside this range are considered as "outliers" and are plotted individually (Figure \@ref(fig:boxplot)).
 
 
-```{r boxplot, fig.cap=figs(name="boxplots")}
+```{r boxplot, fig.cap="Box plots of life expectancy data by continent."}
 ggplot(gapdata, aes(x=continent, y=lifeExp,  colour=continent)) +
   geom_boxplot(width=0.25) +
   scale_colour_brewer(palette = "Set1") +
@@ -189,9 +187,9 @@ A box plot representation gives us a better tool to compare groups.
 ### Violin Plots
 
 We saw that the boxplot let us get a better understanding of how the data is distributed around the median, but it doesn't give us the notion of the density of data observations that were collected along the range (like the histogram did).  
-A violin plot brings the best in both worlds and it is basically a vertical, 2-sided density plots that are plotted along the Y-axis (see `r figs(name="violin", display="cite")`).
+A violin plot brings the best in both worlds and it is basically a vertical, 2-sided density plots that are plotted along the Y-axis (Figure \@ref(fig:violin)).
 
-```{r violin, fig.cap=figs(name="violin")}
+```{r violin, fig.cap="Violin plots of life expectancy data by continent."}
 ggplot(gapdata, aes(x=continent, y=lifeExp,  fill=continent)) +
   geom_violin(draw_quantiles = c(0.2,0.8), trim = FALSE) +
   scale_fill_brewer(palette = "Dark2") +
@@ -200,10 +198,10 @@ ggplot(gapdata, aes(x=continent, y=lifeExp,  fill=continent)) +
 
 Note that in R we can easily determine which quantiles we wish to plot. If we specify `trim=TRUE`, the violin plots will be trimmed and will not include the outliers. 
 
-We can then go ahead and combine violin with boxplots, along with a few adjustments, such as calculating and plotting the average value, to make the plot "publication" ready (`r figs(name="violin_box", display="cite")`).
+We can then go ahead and combine violin with boxplots, along with a few adjustments, such as calculating and plotting the average value, to make the plot "publication" ready (Figure \@ref(fig:violin-box)).
 
 
-```{r violin_box, fig.cap=figs(name="violin_box")}
+```{r violin-box, fig.cap="Combined violin and box plots of life expectancy data by continent."}
 # calculate mean
 mean_values <- gapdata %>% group_by(continent) %>% dplyr::summarise(lifeExp=mean(lifeExp))
 ggplot(gapdata, aes(x=continent, y=lifeExp, colour=continent)) +
@@ -227,7 +225,7 @@ tweet_embed("https://twitter.com/CedScherer/status/1401604888900083713?s=20")
 Sometimes it is very useful to be able to interact with the plot, to interrogate outliers and get the values in real time.
 We can use the `plotly` package for that on the boxplot we created earlier.
 
-```{r boxplot_interactive, fig.cap=figs(name="interactive_boxplots")}
+```{r boxplot-interactive, fig.cap="Interactive box plots of life expectancy data by continent (powered by Plotly)."}
 plot <- ggplot(gapdata, aes(x=continent, y=lifeExp,  colour=continent)) +
   geom_boxplot(width=0.25) +
   scale_colour_brewer(palette = "Set1") +
@@ -236,14 +234,14 @@ plot <- ggplot(gapdata, aes(x=continent, y=lifeExp,  colour=continent)) +
 plotly::ggplotly(plot)
 ```
 
-Use your mouse to hover over the graph in `r figs(name="interactive_boxplots", display="cite")` to get details of outliers and summary statistics for each continent.  
+Use your mouse to hover over the graph in Figure \@ref(fig:boxplot-interactive) to get details of outliers and summary statistics for each continent.  
 This is a great way to share plots between students/supervisors/collaborators to engage discussion on data interpretation and analysis and a tool to allow the public to interact with plots that are hosted online (ask me how!).
 
 #### Downloading files from Binder
 After we've finished working on Binder we can download the R script that we wrote and any output files (summary tables and figures). We can access those files by using the `files` tab in RStudio (bottom right pane).  
-Select the files/folders that you would like to download and click on `r  fa("cog", fill ="#4383A4")`More `r fa("long-arrow-alt-right")` Export... (see screenshot in `r figs(name="binder_export",display="cite")` below) to save the file on your computer.  
+Select the files/folders that you would like to download and click on `r  fa("cog", fill ="#4383A4")` More `r fa("long-arrow-alt-right")` Export... (see screenshot in Figure \@ref(fig:binder-export) below) to save the file on your computer.  
 
-```{r binder_export, echo=FALSE, fig.cap=figs(name="binder_export"), out.width = '75%'}
+```{r binder-export, echo=FALSE, fig.cap="Download files from Binder/RStudio screenshot.", out.width = '75%'}
 knitr::include_graphics(here("figs/Rstudio_export_screenshot.png"))
 ```
 
