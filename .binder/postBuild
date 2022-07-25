@@ -1,5 +1,6 @@
 # mkdir -p data
 # R -e "remotes::install_github('trinker/pacman')"
 R -e "remotes::install_github('gadenbuie/tweetrmd')"
-R -e "chooseCRANmirror(ind=1); install.packages('fontawesome')"
+R -e "remotes::install_github('hadley/emo')"
+# R -e "chooseCRANmirror(ind=1); install.packages('fontawesome')"
 

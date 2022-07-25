@@ -12,7 +12,9 @@ dependencies:
   - r-pacman
   - r-shiny
   - r-rmarkdown
+  - r-bookdown
   - r-ggpubr
+  - r-gtsummary
  # - r-rcpp
   - r-paletteer
   - r-learnr
@@ -29,5 +31,7 @@ dependencies:
   - r-visdat
   - r-pastecs
   - r-rmisc
+  - r-esquisse
+  - r-fontawesome
   - pandoc
  # - libgcc
