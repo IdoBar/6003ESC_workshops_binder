@@ -207,7 +207,6 @@ We just need a few more final touches to make it "publication-ready" (in the sam
 * Changing the resolution of the years in the X-axis
 * Adding a title to the plot (though the caption below should suffice in scientific publications) and correcting the X and Y labels and legend title (note that we actually change the label of `color` aesthetic for that). 
 
-We can use the `equisser()` function to interactively create this plot.  
 The final result can be seen in Figure \@ref(fig:expct-per-year4).  
 
 ```{r expct-per-year4, include=TRUE, echo=TRUE, fig.cap="Life expectancy by years in Asian countries (beautify the plot with themes, colour palettes and labels).", out.width = '80%'}
@@ -230,7 +229,15 @@ ggsave("output/Asia_12_countries_lifeExp_through_years.pdf", width=10, height=8)
 
 ### X-Y plot
 
-This time we'll look at the relationship between GDP per capita and life expectancy using `geom_point()` for X-Y scatter graph and we'll colour the points by continent. We'll already apply the theme, custom colour palette and labels.  
+This time we'll look at the relationship between GDP per capita and life expectancy using `geom_point()` for X-Y scatter graph and we'll colour the points by continent. We'll already apply the theme, custom colour palette and labels. 
+
+We can use the `esquisser(viewer = "browser")` function to interactively create this plot (Figure \@ref(fig:esquisse)). 
+
+```{r esquisse, echo=FALSE, fig.cap="Creating a ggplot interactively with esquisse package.", out.width = '85%'}
+knitr::include_graphics(here("figs/esquisse_screenshot.png"))
+```
+
+Now copy the code from `esquisse` to the script file:
 
 ```{r gdp-per-expct1, include=TRUE, echo=TRUE, fig.cap="Relationship between GDP per capita and life expectancy by continent", out.width = '80%'}
 # create plot
