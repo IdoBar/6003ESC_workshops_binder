@@ -2,9 +2,9 @@
 title: "Tutorial for Workshop 4 - Analysis of COVID-19 Data"
 subtitle: "Scientific Data Analysis 6003ESC" 
 author: "Dr. Ido Bar"
-date: "04/04/2022"
+date: "08/08/2022"
 output: 
-    html_document:
+    bookdown::html_document2:
       css: "style/style.css"
       toc: true
       toc_float: true
@@ -51,7 +51,8 @@ $(document).ready(function() {
 #                        "highcharter", "scales",  "plotly", 
 #                        "lubridate", "here","ISOweek", "countrycode")
 # pacman::p_load(char=required_packages)
-pacman::p_load(tidyverse,  paletteer, glue, scales, plotly, lubridate, patchwork, visdat)
+pacman::p_load(tidyverse,  paletteer, glue, scales, plotly, lubridate, patchwork, 
+               visdat, skimr)
 pacman::p_load_gh("gadenbuie/tweetrmd")
 knitr::opts_chunk$set(
 	echo = TRUE,
@@ -85,7 +86,7 @@ Once RStudio restarts inside the project's folder, create a new R script named `
 ### Install Extra Packages
 
 For this analysis we will again use some packages from the [Tidyverse](https://www.tidyverse.org/){target="_blank"}, but this time we load the specific packages (which are supposed to be pre-installed on your computers) to try and avoid having to download the entire `tidyverse`. In addition to the Tidyverse packages we've got to know in the previous workshop we will use the `plotly` package to create interactive plots, `paletteer` for custom color palettes, `readxl` to read MS-Excel file, `scales` to format large numbers, `lubridate` to better handle dates, `glue` to paste together strings, `patchwork` to include several plots in a single figure and a few others to assist in getting the data into shape.  
-To install these packages, we will introduce a package called [pacman](https://trinker.github.io/pacman/){target="_blank"} that will assist in loading the required packages and installing them if they're not already installed. To install it we use the `install.packages('pacman')` command, please note that the package name need to be quoted and that we only need to perform it once, or when we want or need to update the package.  Once the package was installed, we can load its functions using the `library(pacman)` command and then load/install all the other packages at once with `p_load()` function.
+To use these packages, we will introduce a package called [pacman](https://trinker.github.io/pacman/){target="_blank"} that will assist in loading the required packages and installing them if they're not already installed. To install it we use the `install.packages('pacman')` command, please note that the package name need to be quoted and that we only need to perform it once, or when we want or need to update the package.  Once the package was installed, we can load its functions using the `library(pacman)` command and then load/install all the other packages at once with `p_load()` function.
 
 ```{r install_packages, eval=FALSE}
 # install required packages - needed only once! (comment with a # after first use)
@@ -102,10 +103,10 @@ More information on installing and using R packages can be found in this [tutori
 
 Now that we've got RStudio up and running and our packages installed and loaded, we can read data into R from our local computer or from web locations using dedicated functions specific to the file type (`.csv`, `.txt`, `.xlsx`, etc.). 
 
-We will use the `read_csv()` command/function from the `readr` package (part of the `tidyverse`) to load the data directly from a file on the [Our World in Data](https://ourworldindata.org/covid-vaccinations){target="_blank"} website into a variable of type **data frame** (table). If we don't want to use external packages, we can use the `read.csv()` function from base R, which won't automatically parse columns containing dates and in previous versions of R (< 4.0) will slightly change the structure of the resulting data frame (all text columns will be converted into factors).  
+We will use the `read_csv()` command/function from the `readr` package (part of the `tidyverse`) to load the data directly from a file on the [Our World in Data](https://ourworldindata.org/covid-vaccinations){target="_blank"} website into a variable of type **data frame** (table). If we don't want to use external packages, we can use the `read.csv()` function from base R, which won't automatically parse columns containing dates and in previous versions of R (<4.0) will slightly change the structure of the resulting data frame (all text columns will be converted into factors).  
 > Note that in this case, we need to specify the column types because the data contains a lot of missing values that interfere with the automatic parsing of the column types._
 
-```{r read_data}
+```{r read-data}
 # read data from Our World in Data website
 covid_data <- read_csv("https://covid.ourworldindata.org/data/owid-covid-data.csv", 
                        col_types = paste(c("c", "f", "c", "D", rep("d", 29), 
@@ -119,17 +120,17 @@ Let's use built-in functions for a brief data exploration, such as `head()` to s
 
 ```{r explore_data}
 #explore the data frame
-head(covid_data) # show first 10 rows of the data and typr of variables
-str(covid_data) # show data structure
+head(covid_data) # show first 10 rows of the data and type of variables
 
 ```
 
 ### Descriptive Statistics
-We can also produce some descriptive statistics to better understand the data and the nature of each variable.  The `summary()` function (as can be guessed by its name) provides a quick summary of basic descriptive statistics, such as the _mean_, _min_, _max_ and quantiles for continuous numerical values.  
+We can also produce some descriptive statistics to better understand the data and the nature of each variable.  The `skim()` function (from the [skimr](https://docs.ropensci.org/skimr/){target="_blank"} package) provides an alternative to the base `summary()` function and produces a summary of basic descriptive statistics, such as the  _mean_, _min_, _max_, quantiles and even the SD and rate of missing data for continuous numerical values.  
 
 ```{r summary}
 # summary of variables in my data
-summary(covid_data)
+# summary(covid_data)
+skim(covid_data)
 # find extreme rows
 covid_data %>% arrange(desc(total_cases))
 ```
@@ -141,10 +142,10 @@ location
 date
 ```
 
-Why do we have observations with the continent as `NA`?
+Why do we have observations with missing continent?
 ```{r check_continents}
 # check which location have continent as NA
-covid_data %>% filter(is.na(continent)) %>% count(location)
+covid_data %>% filter(continent=="" | is.na(continent)) %>% count(location)
 ```
 
 ```{fold}
@@ -176,12 +177,12 @@ Let's look at confirmed cases and total deaths data for the 10 most affected cou
 
 Optional step:
 
-  g. We can recode the `location` variable as a factor and order it so the countries will be ordered in the legend by the number of cases with 
+  g. We can recode the `location` variable as a factor and order it so the countries will be ordered in the legend by the number of cases  
 
 Then we can look at the data as a table and make a plot with the number of cases in the y-axis and date in the x-axis.
 ```{r timeseries_cases}
 # find the 10 most affected countries (to date)
-latest_data <- covid_data %>% filter(!is.na(continent)) %>% 
+latest_data <- covid_data %>% filter(!is.na(continent), continent!="") %>% 
   group_by(location) %>% arrange(desc(date)) %>% slice(1) %>% ungroup() 
 most_affected_countries <- latest_data  %>%  
   arrange(desc(total_cases)) %>% slice(1:10) %>% 
@@ -192,7 +193,7 @@ most_affected_data <- covid_data %>%
   inner_join(most_affected_countries) %>% 
   mutate(Country=factor(location, levels = most_affected_countries$location))
 
-# create a line plot the data of total deaths
+# create a line plot the data of total cases
 ggplot(most_affected_data, aes(x=date, y=total_cases, colour=Country)) +
   geom_line(size=0.75) + scale_y_continuous(labels=comma) + 
   scale_color_paletteer_d("rcartocolor::Bold") +
@@ -200,7 +201,7 @@ ggplot(most_affected_data, aes(x=date, y=total_cases, colour=Country)) +
   theme_bw(def_text_size)
 ```
 
-It's a bit hard to figure out how the pandemic evolved because the numbers in US, Brazil and India are an order of magnitude larger than the rest (which are very close to each other). How can we make it more visible (and also improve how of the dates appear in the x-axis)?
+We can look at the exponential increase at the early days of the pandemic if we transform the y-axis to logarithmic scale (and also improve how of the dates appear in the x-axis).
 
 ```{r timeseries_cases_log, warning=TRUE}
 
@@ -221,23 +222,7 @@ Why did we get a warning message and why the graphs don't start at the bottom of
 
 ```{fold}
 What happens when we take the log of 0?? Can we remove those 0s with the `filter()` function (or add a very small number to them)?
-We can see a very similar trend for most countries and while the curve has flattened substantially in April last year, the numbers are still rising. It is also evident that Europe got hit by a second wave arount October last year and India in April this year.
-```
-
-### Total deaths
-Let's have a look at the total deaths in these countries (and get rid of the minor grid lines to make Frank happy)
-
-```{r total_deaths}
-# create a line plot the data of total deaths
-ggplot(most_affected_data, aes(x=date, y=total_deaths, colour=Country)) +
-  geom_line(size=0.75) + scale_y_continuous(labels=comma) + 
-  scale_x_date(NULL,
-               breaks = breaks_width("2 months"), 
-               labels = label_date_short()) + 
-  scale_color_paletteer_d("rcartocolor::Bold") +
-  labs(color="Country", y = "Total deaths") +
-  theme_bw(def_text_size) +  
-  theme(panel.grid.minor = element_blank()) # remove minor grid lines
+We can see a very similar trend for most countries and while the curve has flattened substantially in 2021, the numbers are still rising. It is also evident that Europe got hit by a second wave arount October 2020 and then again around Feb 2022 (with a huge rise in cases in South Korea).
 ```
 
 ### Vaccination rates
@@ -260,22 +245,22 @@ Let's visualise some of the variables in our data and assess "missingness".
 
 ```{r missing_data}
 # visualise missingness
-vis_dat(covid_data %>% filter(date>dmy("01-01-2021")) %>% 
+vis_dat(covid_data %>% filter(date>dmy("01-01-2022")) %>% 
           select(continent, location, total_cases, total_deaths, 
                  hosp_patients, people_vaccinated, people_fully_vaccinated))
                                                                  
 # find which countries has the most number of observations (least missing data)
-covid_data %>% filter(!is.na(continent), !is.na(people_vaccinated)) %>% # group_by(location) %>% 
-  count(location) %>% arrange(desc(n)) %>% print(n=30)
-
-covid_data %>% filter(!is.na(continent), !is.na(hosp_patients)) %>% # group_by(location) %>% 
-  count(location) %>% arrange(desc(n)) %>% print(n=30)
+# covid_data %>% filter(!is.na(continent), continent!="", !is.na(people_vaccinated)) %>% # group_by(location) %>% 
+#   count(location) %>% arrange(desc(n)) %>% print(n=30)
+# 
+# covid_data %>% filter(!is.na(continent), continent!="", !is.na(hosp_patients)) %>% # group_by(location) %>% 
+#   count(location) %>% arrange(desc(n)) %>% print(n=30)
 ```
 
 ### Hospitalisation and Vaccination rates
 Now we can focus on a subset of countries that have more complete vaccination and hospitalisation rates data, so we could compare them.
 ```{r subset_countries}
-countries_subset <- c("Italy", "United States", "Israel", "United Kingdom",  "France", "Czechia")
+countries_subset <- c("Italy", "Canada", "Israel", "United Kingdom",  "France", "Australia", "Malaysia", 'South Africa', "India")
 # subset our original data to these countries
 hosp_data <- covid_data %>% filter(location %in% countries_subset)
 # define a new colour palette for these countries
@@ -330,20 +315,20 @@ p2 <- ggplot(hosp_data,
   scale_x_date(name = NULL,
                breaks = breaks_width("2 months"), 
                labels = label_date_short()) + 
-  labs(color="Country", y = "Fully vaccinated (percent)") +
+  labs(color="Country", y = "Rate of fully vaccinated people") +
   theme_bw(def_text_size) + 
   theme(panel.grid.minor = element_blank())
 p2
 ```
 
-What will be the best way to compare these values? Maybe like this:
+What will be the best way to compare these values? Maybe like this (note that this syntax is used by `patchwork` package to arrange the plots):
 
 ```{r compare2}
-(p1 + guides(color=FALSE)) / (p2 + theme(legend.position = "bottom")) #+ plot_layout(guides = 'collect')# show graphs on top of each other
+(p1 + guides(color="none")) / (p2 + theme(legend.position = "bottom")) #+ plot_layout(guides = 'collect')# show graphs on top of each other
 ```
 
 Any other suggestions?
-Let's try to present them on the same graph (note the trick with the **secondary y-axis**).
+Let's try to present them on the same graph (note the trick with the **secondary y-axis**), but for each country separately (done with the `facet_wrap()` function)..
 
 ```{r secondary_y}
 # show on the same graph
@@ -351,28 +336,20 @@ p4 <- ggplot(hosp_data,
        aes(x=date, colour=location)) +
   geom_line(aes(y = hosp_patients_per_million), size=0.75) + 
   geom_line(aes(y = people_fully_vaccinated_per_hundred*10), size=0.75, linetype="dashed") + 
-  scale_y_continuous(labels=comma, name = "Hospitalised patients per million (solid)",
+  scale_y_continuous(name = "Hospitalised patients per million (solid)",
                      # Add a second axis and specify its features
-                     sec.axis = sec_axis(trans=~./10,  name="Fully vaccinated per hundred (dashed)")) + 
+                     sec.axis = sec_axis(trans=~./10,  
+                                         name="Fully vaccinated per hundred (dashed)")) + 
   scale_color_paletteer_d(col_pal) +
   scale_x_date(NULL,
-               breaks = breaks_width("2 months"), 
+               breaks = breaks_width("6 months"), 
                labels = label_date_short()) + 
   labs(color="Country") +
   theme_bw(def_text_size) + 
-  theme(panel.grid.minor = element_blank()) 
-p4
-```
-
-Probably best to present them on the same graph, but for each country separately (done with the `facet_wrap()` function).
-
-```{r secondary_y_facet}
-# show on the same graph, but separate each country
-p4 + 
-  scale_x_date(NULL,
-               breaks = breaks_width("4 months"), 
-               labels = label_date_short()) +
+  theme(panel.grid.minor = element_blank()) + 
   facet_wrap(~location)
+p4
+
 ```
 
 Save the plot to a file.
@@ -385,69 +362,69 @@ ggsave("output/hospit_vacc_rates_facet_country.pdf", width=14, height = 8)
 ```
 
 
-```{r mort_rates}
-# subset our original data to our countries + Europe (European average)
-mort_data <- covid_data %>% 
-  filter(location %in% c(countries_subset, "Europe")) %>% 
-  select(date, location, new_deaths_smoothed_per_million)
-# Get the EU new death rates
-EU_mortality_data <- covid_data %>% filter(location=="Europe") %>% 
-  select(date, EU_dpm=new_deaths_smoothed_per_million)
+<!-- ```{r mort_rates} -->
+<!-- # subset our original data to our countries + Europe (European average) -->
+<!-- mort_data <- covid_data %>%  -->
+<!--   filter(location %in% c(countries_subset, "Europe")) %>%  -->
+<!--   select(date, location, new_deaths_smoothed_per_million) -->
+<!-- # Get the EU new death rates -->
+<!-- EU_mortality_data <- covid_data %>% filter(location=="Europe") %>%  -->
+<!--   select(date, EU_dpm=new_deaths_smoothed_per_million) -->
 
-# create a new calculated column with the difference from the EU average
-comp_mort_data <- mort_data %>% left_join(EU_mortality_data) %>% 
-  mutate(new_mort_change=new_deaths_smoothed_per_million-EU_dpm,
-         location=fct_relevel(factor(location), "Europe", after = Inf)) 
+<!-- # create a new calculated column with the difference from the EU average -->
+<!-- comp_mort_data <- mort_data %>% left_join(EU_mortality_data) %>%  -->
+<!--   mutate(new_mort_change=new_deaths_smoothed_per_million-EU_dpm, -->
+<!--          location=fct_relevel(factor(location), "Europe", after = Inf))  -->
 
-mort_plot <- ggplot(comp_mort_data, 
-             aes(x=date, y = new_mort_change ,colour=location)) +
-  geom_line(size=0.75) + 
-  guides(color = guide_legend(override.aes = list(linetype="solid") ) ) +
-  # scale_y_continuous(labels=percent) + 
-  scale_color_paletteer_d(col_pal) +
-  scale_x_date(name = NULL,
-               breaks = breaks_width("2 months"), 
-               labels = label_date_short()) + 
-  labs(color="Country", 
-       y = "New COVID-related deaths (in comparison to the EU average)") +
-  theme_bw(def_text_size) + 
-  theme(panel.grid.minor = element_blank())
+<!-- mort_plot <- ggplot(comp_mort_data,  -->
+<!--              aes(x=date, y = new_mort_change ,colour=location)) + -->
+<!--   geom_line(size=0.75) +  -->
+<!--   guides(color = guide_legend(override.aes = list(linetype="solid") ) ) + -->
+<!--   # scale_y_continuous(labels=percent) +  -->
+<!--   scale_color_paletteer_d(col_pal) + -->
+<!--   scale_x_date(name = NULL, -->
+<!--                breaks = breaks_width("2 months"),  -->
+<!--                labels = label_date_short()) +  -->
+<!--   labs(color="Country",  -->
+<!--        y = "New COVID-related deaths (in comparison to the EU average)") + -->
+<!--   theme_bw(def_text_size) +  -->
+<!--   theme(panel.grid.minor = element_blank()) -->
 
-ggplotly(mort_plot)
+<!-- ggplotly(mort_plot) -->
 
-```
+<!-- ``` -->
 
-Save the plot to a file.
+<!-- Save the plot to a file. -->
 
-```{r save_plot2, eval=FALSE}
-# save the plot to pdf file
-ggsave("output/mortality_rates_vs_EU_average.pdf", width=12, height = 8)
-```
+<!-- ```{r save_plot2, eval=FALSE} -->
+<!-- # save the plot to pdf file -->
+<!-- ggsave("output/mortality_rates_vs_EU_average.pdf", width=12, height = 8) -->
+<!-- ``` -->
 
-Plot for each country separately:
+<!-- Plot for each country separately: -->
 
-```{r mort-plot-facets}
-ggplot(comp_mort_data %>% filter(location!="Europe"), 
-             aes(x=date, y = new_mort_change ,colour=location)) +
-  geom_line(size=0.75) + 
-  guides(color = guide_legend(override.aes = list(linetype="solid") ) ) +
-  # scale_y_continuous(labels=percent) + 
-  scale_color_paletteer_d(col_pal) +
-  scale_x_date(name = NULL,
-               breaks = breaks_width("4 months"), 
-               labels = label_date_short()) + 
-  labs(color="Country", 
-       y = "New COVID-related deaths (in comparison to the EU average)") +
-  theme_bw(def_text_size) + 
-  theme(panel.grid.minor = element_blank()) + 
-  facet_wrap(~location, ncol = 2) +
-  geom_hline(yintercept = 0)
+<!-- ```{r mort-plot-facets} -->
+<!-- ggplot(comp_mort_data %>% filter(location!="Europe"),  -->
+<!--              aes(x=date, y = new_mort_change ,colour=location)) + -->
+<!--   geom_line(size=0.75) +  -->
+<!--   guides(color = guide_legend(override.aes = list(linetype="solid") ) ) + -->
+<!--   # scale_y_continuous(labels=percent) +  -->
+<!--   scale_color_paletteer_d(col_pal) + -->
+<!--   scale_x_date(name = NULL, -->
+<!--                breaks = breaks_width("4 months"),  -->
+<!--                labels = label_date_short()) +  -->
+<!--   labs(color="Country",  -->
+<!--        y = "New COVID-related deaths (in comparison to the EU average)") + -->
+<!--   theme_bw(def_text_size) +  -->
+<!--   theme(panel.grid.minor = element_blank()) +  -->
+<!--   facet_wrap(~location, ncol = 2) + -->
+<!--   geom_hline(yintercept = 0) -->
 
-```
-```{r save_plot3, eval=FALSE}
-# save the plot to pdf file
-ggsave("output/mortality_rates_vs_EU_average_facets.pdf", width=11, height = 8)
-```
+<!-- ``` -->
+<!-- ```{r save_plot3, eval=FALSE} -->
+<!-- # save the plot to pdf file -->
+<!-- ggsave("output/mortality_rates_vs_EU_average_facets.pdf", width=11, height = 8) -->
+<!-- ``` -->
 
 #### Questions
 1. What other variables we could analyse? 

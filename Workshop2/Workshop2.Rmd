@@ -1,10 +1,10 @@
 ---
-title: "Tutorial for Workshop 2 - Descriptive Statistics"
+title: "Tutorial for Workshop 3 - Descriptive Statistics"
 subtitle: "Scientific Data Analysis 6003ESC" 
 author: "Dr. Ido Bar"
 date: "01/08/2022"
 output: 
-    html_document:
+    bookdown::html_document2:
 #      css: "style/style.css"
       toc: true
       toc_float: true
@@ -16,7 +16,7 @@ output:
 
 ```{r setup, include=FALSE}
 pacman::p_load(tidyverse, ggpubr, paletteer, fontawesome, 
-               here, plotly, gtsummary, esquisse)
+               here, plotly, skimr, esquisse)
 pacman::p_load_gh("gadenbuie/tweetrmd")
 # pacman::p_load_gh("mitchelloharawild/icons", update = FALSE)
 knitr::opts_chunk$set(echo = TRUE, fig.align='center')
@@ -42,18 +42,20 @@ Additional instructions (and screenshots) on using R, RStudio and Binder are ava
 ## Analyse Data in R
 ### Install Extra Packages
 
-For this analysis we will again use some packages from the [Tidyverse](https://www.tidyverse.org/), but this time we load the specific packages (which are supposed to be pre-installed on your computer) to try and avoid having to download the entire `tidyverse`. Please install the packages if you're getting error when running the `library()` command.  In addition we will use the `plotly` package to create interactive plots.  
+For this analysis we will again use some packages from the [Tidyverse](https://www.tidyverse.org/). Please install the packages if you're getting error when running the `library()` command.  In addition we will use the `skimr` package to produce descriptive statistics and summaries of the data, `paletteer` for custom colour palettes and `plotly` to create interactive plots.  
 To install these packages, we use the `install.packages('package')` command, please note that the package name need to be quoted and that we only need to perform it once (if we followed step 3b above, or every time we restart the server if we didn't), or when we want or need to update the package.  Once the package was installed, we can load its functions using the `library(package)` command. _Note that in this case we use the package name without quotes!_.  
 
 ```{r install_packages, eval=FALSE}
 # install required packages - needed only once! (comment with a # after first use)
 # install.packages(c("dplyr", "ggplot2", "readr","RColorBrewer", "Rmisc", "plotly"))
-install.packages("tibble")
+install.packages("skimr")
+install.packages("plotly")
+install.packages("paletteer")
 # load required packages
-library(dplyr)
-library(readr)
-library(ggplot2)
-library(RColorBrewer)
+library(tidyverse)
+library(skimr)
+library(plotly)
+library(paletteer)
 ```
 
 More information on R packages can be found in this [tutorial](http://www.sthda.com/english/wiki/installing-and-using-r-packages){target="_blank"}.
@@ -119,6 +121,14 @@ We can also sort the data to look at extreme values. As opposed to using `summar
 gapdata %>% arrange(lifeExp)
 # Look at top rich countries
 gapdata %>% arrange(desc(gdpPercap))
+```
+
+We can get a detailed look at the descriptive statistics per continent (including rate of missing data) using the `skim()` function:
+
+```{r skimr}
+gapdata %>% 
+  mutate(continent_fct=factor(continent)) %>% 
+  group_by(continent) %>% skim()
 ```
 
 ## Descriptive Statistics plotting

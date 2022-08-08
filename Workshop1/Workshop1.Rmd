@@ -1,6 +1,6 @@
 ---
 title: "Scientific Data Analysis 6003ESC"
-subtitle: "Tutorial for Workshop 1"
+subtitle: "Tutorial for Workshops 1-2"
 author: "Dr. Ido Bar"
 date: "25/07/2022"
 output: 
