@@ -2,7 +2,7 @@
 title: "Tutorial for Workshop 3 - Descriptive Statistics"
 subtitle: "Scientific Data Analysis 6003ESC" 
 author: "Dr. Ido Bar"
-date: "01/08/2022"
+date: "20/03/2023"
 output: 
     bookdown::html_document2:
 #      css: "style/style.css"
@@ -43,14 +43,13 @@ Additional instructions (and screenshots) on using R, RStudio and Binder are ava
 ### Install Extra Packages
 
 For this analysis we will again use some packages from the [Tidyverse](https://www.tidyverse.org/). Please install the packages if you're getting error when running the `library()` command.  In addition we will use the `skimr` package to produce descriptive statistics and summaries of the data, `paletteer` for custom colour palettes and `plotly` to create interactive plots.  
-To install these packages, we use the `install.packages('package')` command, please note that the package name need to be quoted and that we only need to perform it once (if we followed step 3b above, or every time we restart the server if we didn't), or when we want or need to update the package.  Once the package was installed, we can load its functions using the `library(package)` command. _Note that in this case we use the package name without quotes!_.  
+To install these packages, we use the `pkg_install('package')` command (from package [pak](https://pak.r-lib.org/){target="_blank"}), please note that the package name need to be quoted and that we only need to perform it once (if we followed step 3b above, or every time we restart the server if we didn't), or when we want or need to update the package.  Once the package was installed, we can load its functions using the `library(package)` command. _Note that in this case we use the package name without quotes!_.  
 
 ```{r install_packages, eval=FALSE}
 # install required packages - needed only once! (comment with a # after first use)
 # install.packages(c("dplyr", "ggplot2", "readr","RColorBrewer", "Rmisc", "plotly"))
-install.packages("skimr")
-install.packages("plotly")
-install.packages("paletteer")
+library(pak)
+pkg_install(c("skimr","plotly","paletteer")  
 # load required packages
 library(tidyverse)
 library(skimr)
@@ -241,7 +240,7 @@ plot <- ggplot(gapdata, aes(x=continent, y=lifeExp,  colour=continent)) +
   scale_colour_brewer(palette = "Set1") +
   labs(y="Life Expectancy", colour="Continent", x="") +
   theme_bw(16)
-plotly::ggplotly(plot)
+ggplotly(plot)
 ```
 
 Use your mouse to hover over the graph in Figure \@ref(fig:boxplot-interactive) to get details of outliers and summary statistics for each continent.  
