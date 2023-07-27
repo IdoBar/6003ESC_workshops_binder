@@ -1,0 +1,1132 @@
+---
+title: 'Week 7: Statistical Inference Revision'
+output:
+  html_document:
+    code_folding: show
+    includes:
+    toc: yes
+    toc_depth: 5
+    toc_float:
+      collapsed: yes
+runtime: shiny_prerendered
+---
+<!-- Make output window wider for R output so it doesn't split at columns at end -->
+```{r set-options, echo=FALSE, cache=FALSE}
+options(width = 120)
+
+# library(learnr)
+```
+
+```{js logo-js, echo=FALSE}
+$(document).ready(function() {
+  $('#header').parent().prepend('<div id=\"Griffith logo\"><img src=\"https://www.griffith.edu.au/__data/assets/image/0018/653121/Griffith_Full_Logo_scaled.png\" style=\"position:absolute; top:50px; right:0; padding:20px; height:120px\"></div>');
+  $('#header').css('margin-right', '120px')
+});
+```
+
+<p style="text-align: center;"><font size="+2">James McBroom - August 2020 </font></p>
+<br><br>
+
+
+# Statistical Inference Refresher - Basic Hypothesis Tests
+
+## Instructions
+
+The following tutorial will let you reproduce the plots that we are going to create at the workshop using R.  
+Please read carefully and follow the steps. Wherever you see the <kbd>Code</kbd> icon on the right you can click on it to see the actual code used in that section.  
+
+## Introduction
+
+In this workshop we'll be going over some of the basic tests used for statistical inference. All of this material is revision from any decent first year statistics course, so if you have done any introductory statistics at university before, crack out your old lecture notes or text books if you want more information than what is presented here. 
+
+### Course R Library
+
+I have created a very small R package for the material in this part of the course. It simply enables you to access the data sets we use in the examples below. You have two options for installing these packages. I would highly suggest trying to install the binary version first. If that is unsuccessful for some reason, try installing the source package. 
+
+To install the binary package pick the one that corresponds to your operating system (xxx.zip for Windows; xxx.tgz for MacOS), download and save it to your computer. Then in RStudio go to the Tools menu item and select the "Install Packages" item from the drop-down menu. In the box that opens up, choose "Package Archive File" in the "Install from:" section. Then under "Package archive:" click the "Browse" button and navigate to where you saved the downloaded package archive. You can safely ignore the "Install to Library:" section and just click on the "Install" button. It should then install for you with no issues. 
+
+To run R and RStudio for this workshop on Binder (with all packages pre-installed), click on this badge - [![Launch Rstudio Binder](https://static.mybinder.org/badge_logo.svg){width=125px}](https://mybinder.org/v2/gh/IdoBar/6003ESC_workshops_binder/main?urlpath=rstudio){target="_blank"}.
+
+If for some reason there are issues with installing the binary for your OS, try downlowding and saving the source package instead (xxx.tar.gz). Use the same process as described in the previous paragraph to install it. If you are still having issues, contact me (j.mcbroom@griffith.edu.au) as soon as possible.
+
+## Hypothesis Testing – The General Process
+
+Do the sample data support the claim made by the researcher? In such situations there are two main types of question:
+
+1. Question asked is:
+	- Is the value (parameter) as proposed?
+    - Is the proportion of males equal to 0.5?
+    - Is the standard deviation of leaf area greater than 10% of its mean?
+    - Is the maximum energy output greater than 10kw?
+    - Is the mean dissolved oxygen (DO) in the Brisbane river below the critical level for fish survival?
+
+
+2. Question asked is:
+   - Are the parameters the same for different groups/situations/etc?
+   - Is the mean level of NOX (nitrogen oxide) in the atmosphere increasing – time 1 versus time 2?
+   - Is a particular grass species more tolerant to pressure from foot traffic than another grass species?
+   - Is the average house loan through a particular bank the same this year as at the same time last?
+
+## The 10 Steps of Hypothesis Testing
+
+1. Identify clearly the scientific problem and question.
+
+2. From the identified question, clearly define the research hypothesis at issue.
+
+3. Decide on the resources, required detectable difference and significance level.
+
+4. Formulate the statistical hypotheses: null and alternative.
+
+5. Determine the theoretical model - based on null hypothesis and assumptions.
+
+6. Identify the test statistic, its null distribution, and the relevant critical region.
+
+7. Obtain the sample data and calculate the sample test statistic.
+
+8. Compare the sample test statistic with the null distribution using the critical region OR evaluate the p-value for the test.
+
+9. Make statistical conclusion and interpret result in terms of original question.
+
+10. Consider the possible errors - type I, type II.
+
+### 1 The Scientific Problem and Question
+
+It is the duty of the researcher to identify and explain the problem being studied.
+If this is not carried out with care improper, incorrect, and/or misleading conclusions may occur.
+
+### 2 The Research Hypothesis
+
+- A specific belief about some feature of the population variable – eg a mean, proportion, range.
+- The feature will describe the variable in some way.
+- The feature must be measurable or observable	(not necessarily quantitative).
+- Also known as a scientific hypothesis or an English hypothesis.
+- Refers to a situation, problem, question.
+
+Dictionary Definitions of the English word hypothesis
+
+>Supposition made as basis for reasoning, without assumption of its truth, or as starting-point for investigation (The Concise Oxford Dictionary, 1975)
+
+>A proposition assumed as a premise in an argument;  a proposition (or set of propositions) proposed as an explanation for the occurrence of some specified group of phenomena, either asserted or merely as a provisional conjecture to guide investigation
+(Macquarie Concise Dictionary, 1996)
+
+One of the most common problem areas in research design is inadequate clarification of the research hypothesis – it must be specific and unambiguous; it must be clear what is to be measured. What may seem obvious to the researcher at the time may be less than obvious to someone else, for example a research assistant actually collecting the data, and may be no longer obvious to anyone at a later date!
+
+**Example:**
+
+Decide whether each of the following is a good research hypothesis.
+
+1. 36% of Australian females between 15 and 24 years of age smoke cigarettes.
+
+2. The probability that a cyclone first located in the Coral Sea will cross the Queensland coast is 0.20.
+
+3. Budgerigars in inland Australia have a smaller range of body weights than do budgerigars on the coast.
+
+4. The minimum temperature in Brisbane never goes below 0$^{\circ}$C.
+
+5. The average Mastercard debt is \$600.
+
+6. Toyota Corollas are better cars than Ford Lasers.
+
+7. Most people eat meat.
+
+8. OPs in Private Schools cover a smaller range than OPs in State Schools.
+
+9. Five percent of women who take the contraceptive pill still fall pregnant.
+
+10. The average level of hydrocarbon concentration in body tissues increases up the food chain indicating an accumulation process.
+
+11. The noise levels from the freeway are above the maximum decibel level set by the Australian standards.
+
+**Difficulties in defining the research hypothesis**
+
+The following are common difficulties encountered by researchers when they are attempting to define the research hypothesis.
+- Identifying the problem of interest
+- Defining the population
+- Identifying the specific question which is being asked
+- Stating the specific belief
+
+**Remember, the feature describes the population variable**
+
+**Example:**
+Identify the variables, populations and research hypotheses for some of the examples given in the example above.
+
+### 3 Resources, Required Detectable Differences, Significance Level Required
+
+**Resources:** The resources that are available for the study need to be assessed at the beginning of the project and compared with the resources required to achieve the desired aim. If the two are not compatible, proceeding with the research may be a complete waste of time and money. Statistical input can help with this process, and ‘clever’ designs may enable research that would otherwise not be possible.
+
+**Detectable Differences:** It is important to recognise the difference between ‘statistical difference’ and ‘observed difference’. For example, two sample means may have different values, but because of the variation associated with the measurement, it is not possible to say that they come from different populations – they are not statistically different. The researcher needs to think about the minimum difference he wishes to be able to detect – this will influence the size of the sample needed in the experimental design. It may also mean that the resources will not be sufficient; this will mean further thinking and maybe the decision not to go ahead with the study.
+
+**The Significance Level:** The chance the researcher is willing to take of incorrectly supporting the research hypothesis – usually designated by $\alpha$ (alpha).
+- Traditionally the level is set at 0.05 or 0.01, **why?**
+- The level depends on the situation.
+- 0.05 and 0.01 are like hair lengths, different people and/or problems require different reliabilities - be yourself!
+- The possible error if the conclusion is to reject the null hypothesis.
+
+
+### 4 The Statistical Hypotheses
+
+**The Alternative Hypothesis** – $H_1$ or $H_a$
+
+- The ‘research’ hypothesis – possibly reformulated in statistical jargon.
+- The 'belief' we want to prove true.
+- The opposite of the null hypothesis.
+- By disproving the null, we say we have 'proved' the alternative.
+- Usually represented as H1 
+
+**The Null Hypothesis** - $H_0$
+
+- Restatement of the research hypothesis in a form that is testable – usually involves negation.
+- Expresses the belief about the feature describing the variable in a way that is testable.
+- There must be a known theoretical model relating to the distribution of the feature OR a way of obtaining an empirical null distribution (resampling or bootstrapping).
+- Is true if and only if the alternative is false. We can never prove it true.
+
+**Hypotheses are statements about the population not about the sample.**
+
+***One and Two Tailed Hypotheses***
+
+Where do the tails fit in?
+
+Tails play a significant (pun intended!) role in statistical inference – depends on question being asked.
+
+**Two Tailed:**  
+Null contains:	    *equals*
+
+Alternative contains:	    *not equals*
+
+**One Tailed:**   
+Null contains:                  *equals and greater than*   **OR** *equals and less than*
+
+Alternative contains:	   *less than* **OR** *greater than*
+
+**Example:**
+
+A comparative study is to be carried out on the populations of fiddler crabs in the Tweed River and the Brisbane River. One aspect to be studied is the weight of an adult crab, a component of interest to a potential marketing venture. Write the hypotheses for the following:
+
+1. Belief: crabs in the Tweed River have a different weight from those in the Brisbane River.
+
+
+
+
+
+2. Belief: crabs in the Tweed River weigh more than those in the Brisbane River.
+
+
+
+
+
+
+3. Belief: crabs in the Tweed River weigh less than those in the Brisbane River.
+
+
+
+
+
+
+
+### 5 Theoretical Models used in Testing Hypotheses
+
+Theoretical models are used to specify the ***null distribution***, that is, the distribution of the test statistic **if the null hypothesis is true**.
+
+The model will depend on the measurement and on the feature of interest in the research hypothesis. For example:
+
+- A study involves a series of Bernoulli trials; feature of interest is a count or proportion - the theoretical model will be the Binomial;
+- If a continuous measurement such as weight is to be investigated and the mean is of interest - the Normal or t- distribution may be an appropriate model;
+- If the aim is to test the goodness of fit of some data to a specified distribution - the chi-squared model could be used.
+
+The feature of interest is usually converted to a *test statistic* which has a known distribution, assuming the null hypothesis is true (the Null Distribution).
+
+All theoretical models involve assumptions. Violations of these assumptions may or may not have a dramatic effect on the outcome of any inference undertaken. If you are ever in any doubts regarding assumptions and your data, consult a statistician for advice.
+
+### 6 The Test Statistic, its Null Distribution, Significance Level and Critical Region
+
+**The Test Statistic:**
+
+- Usually a function of the 'feature of interest’ and is known to have a particular distribution – this contributes to the ‘testability’ of the process.
+
+- Should be something that has meaning in the context of the feature of interest – if you want to determine if two things are different, you might decide to look at their absolute difference, and include some sort of weighting – a difference of two has more impact if the values are near10 than if the values are near 1000
+
+For example, when testing hypotheses about the population mean the equivalent Z score (or t- value if the standard deviation is estimated) becomes a test statistic.
+
+**The null distribution**
+
+- Is the probability distribution of the test statistic, assuming the null hypothesis is true.
+- If $H_0$ is true, this is the distribution we would expect the feature (or some expression based on it) to have. 
+- The distribution for the population of 'feature values' if H0 is true – eg, the distribution of the sample mean .
+
+**Significance Level – alpha, $\alpha$**
+
+The risk you are willing to take that you will reject the null hypothesis when it is really true. The probability of a Type I error. It defines the ‘cut off’ point for the test statistic.
+
+**Critical Region**
+
+- Determined by the specified significance level, $\alpha$
+- The region of the null distribution where it is considered unlikely for a value of the test statistic to occur.
+- If sample value lies here, it is regarded as evidence to reject $H_0$ in favour of $H_1$.
+
+***The relationships of the test statistic to the sample and population are critical.***
+
+### 7 Sample Collection and Calculation of Sample Test Statistic
+
+Ways of selecting the sample are discussed at length in various introductory texts. In general, samples should be random and representative of the population they are taken from. The test statistic is calculated as per the definition of whatever ‘meaningful’ feature has been selected, given the question asked and the available data – eg a count or a mean or a sum of deviations or …
+
+
+### 8 Comparison of Sample Test Statistic with Null Distribution
+
+- The sample test statistic is calculated from the observed data and compared with the null distribution which reflects the population if $H_0$ is true.
+- If the sample test statistic lies in the ‘critical region’ the null hypothesis is rejected at the specified level of significance.
+- If it does not lie in the critical region the null hypothesis is not rejected – the data do not provide evidence to reject the null hypothesis in favour of the research (alternative) hypothesis. 
+
+
+***The p-Value of a Test***
+
+- Probability of observing a value of the test statistic **as extreme as, or more extreme than**, that seen in the sample.
+- Calculated from the null distribution.
+- Called the p-value for the sample test statistic
+- Is the probability of selecting a sample **at least as favourable to the research hypothesis** (alternative) as the observed sample.
+- It represents the **attained level of significance** for the test.
+
+ 
+### 9 Conclusion and Interpretation 
+
+- Depends on whether we reject or fail to reject the null hypothesis.
+- Remember, **failing to reject the null hypothesis does not mean the null hypothesis is true**
+
+### 10 Consider Possible Errors:
+
+Two basic types of error can occur whenever hypothesis testing is carried out. These are summarised in the following table:
+
+
+
+|            |                      |                    TRUE | SITUATION               |
+|:------------|:--------------------|:-----------------------:|:------------------------:|
+|            |                      |      $H_0$ is True      |      $H_0$ is False     |
+| **TEST**   | Fail to Reject $H_0$ |         Correct         | Type II Error ($\beta$) |
+| **CONCLUSION**|     Reject $H_0$     | Type I Error ($\alpha$) |         Correct         |
+
+
+
+
+The **LEVEL OF SIGNIFICANCE** is the probability of making a Type I error and is under the
+control of the person carrying out the statistical test. The symbol used is $\alpha$ (alpha).
+
+The **PROBABILITY OF A TYPE II ERROR** depends on the true alternative hypothesis (and
+several other things) and is thus usually unknown. The symbol used is $\beta$ (beta).
+
+**Power of a Statistical Test**
+
+- The power of a statistical test is the probability of correctly rejecting the null hypothesis.
+- The probability of correctly detecting a valid alternative hypothesis.
+- Power is calculated as one minus the probability of a Type II error. Power   =   1 - $\beta$
+- A test with low power results in a higher chance of not rejecting the null hypothesis when it should in fact be rejected.
+
+For example, if we conclude that the null hypothesis: *equal numbers of males and females* cannot be rejected, then it may be that the test of proportion being used has a low power and we are simply not detecting the actual difference.
+
+This may be a case of no *statistical difference* when there is a *meaningful real difference*. 
+
+***Note: It is also possible to find a statistically significant difference that is not a scientifically significant or meaningful effect. Being a slave to p-values can lead you into trouble - there is no substitute for common sense and scientific knowledge. You should always ask yourself" "Does this result make sense?"***
+
+# Hypothesis Tests: Specific Tests
+
+## 1. $\chi^2$ Test of Independence - Two-Way Contingency Table
+
+The $\chi^2$ test of independence is a form of the goodness of fit test and occurs when the question raised concerns whether or not two categorical variables are independent of each other. For example, 
+
+- are hair colour and eye colour independent of each other? 
+- Are sex and dexterity (right or left handedness) independent of each other? 
+- Is the incidence of asthma in children related to the use of mosquito coils?
+- Does the type of credit card preferred depend on the sex of the customer? 
+- Do males prefer Android phones and females prefer iPhones?
+
+You will recall that if two events, $A$ and $B$ are independent of each other, the probability that $A$ and $B$ occur simultaneously is the product of their marginal probabilities:
+
+\begin{equation}
+P(A \& B) = P(A)P(B) \label{eq:indep} \tag{1}
+\end{equation}
+
+This is the basis of the Test of Independence. We start with the hypotheses:
+
+$$
+\begin{align*}
+H_0:  & \text{  Variable A is independent of Variable B} \\
+H_1:  & \text{  Variable A and Variable B are dependent}
+\end{align*}
+$$
+
+We then create a two-way contingency table  - the rows are the categories of one of the variables, the columns are the categories of the other variable. If Variable A has $a$ categories and Variable B has $b$ categories, the table will contain $a \times b$ cells, and each cell will contain a count of how many observations fall into that particular combination of A and B. These are the *observed cell frequencies*, $O_{ij}$ for $i=1, \dots, a$ and $j = 1, \ldots, b$.
+
+We then calculate, for each cell, the *expected cell frequencies*, $E_{ij}$, $i=1, \dots, a$, $j = 1, \ldots, b$,   ***assuming the null hypothesis to be true***, that is, assuming Variables A and B are independent of each other. We do this by using the definition of independence as shown in Equation $\eqref{eq:indep}$. These expected values are calculated using:
+
+\begin{equation}
+E(i, j) = \frac{(T_i \times T_j)}{T} \label{eq:expecteds} \tag{2}
+\end{equation}
+
+where $T_i$ denotes the total of the $i^{\text{th}}$ row, $T_j$ denotes the total of the $j^{\text{th}}$ column, and $T$ denotes the total across all cells (the total sample size, $n$).
+
+Once the expected values have been calculated for each cell we compare them to the observed values using the test statistic:
+
+\begin{equation}
+T = \sum_{i = 1}^a \sum_{j = 1}^b \frac{(O_{ij} - E_{ij})^2}{E_{ij}}  
+\label{eq:chisq-test} \tag{3}
+\end{equation}
+
+It can be shown that, [under certain conditions](#conditions), the statistic defined in equation $\eqref{eq:chisq-test}$ has a $\chi^2_{(a-1) \times (b-1)}$ distribution if the null hypothesis is true. 
+
+### Example:
+
+One hundred students were selected at random from the ESC School first year Statistics course and their hair and eye colours recorded. These values have then been summarised into a two-way table as follows:
+
+|                  |     **Hair**    |            | **Colour** |                 |
+|:----------------:|:---------------:|:----------:|:----------:|:---------------:|
+|  **Eye Colour**  | **Brown/Black** | **Blonde** |   **Red**  | **Total (Eye)** |
+|     **Blue**     |        5        |     12     |      1     |        **18**       |
+|  **Green/Hazel** |        25       |      2     |      8     |        **35**       |
+|     **Brown**    |        40       |      6     |      1     |        **47**       |
+| **Total (hair)** |        **70**       |     **20**     |     **10**     |     **100**     |
+
+Do these data support or refute the belief that a person’s hair and eye colours are independent? 
+
+\begin{align*}
+H_0:  & \text{  Hair colour is independent of eye colour} \\
+H_1:  & \text{  Hair and eye colour are dependent}
+\end{align*}
+
+We calculate the expected values for this table using Equation $\eqref{eq:expecteds}$. They are shown in the table below in *italics*:
+
+
+|                  |     **Hair**    |            | **Colour** |                 |
+|:----------------:|:---------------:|:----------:|:----------:|:---------------:|
+|  **Eye Colour**  | **Brown/Black** | **Blonde** |   **Red**  | **Total (Eye)** |
+|     **Blue**     |        5  *12.6*       |     12  *3.6*    |      1   *1.8*   |        **18**       |
+|  **Green/Hazel** |        25   *24.5*     |      2   *7*   |      8  *3.5*    |        **35**       |
+|     **Brown**    |        40    *32.9*    |      6   *9.4*   |      1    *4.7* |        **47**       |
+| **Total (hair)** |        **70**     |     **20**    |     **10**     |     **100**     |
+
+
+Using Equation $\eqref{eq:chisq-test}$, we calculate the test statistic as:
+
+\begin{align*}
+T & = \sum_{i = 1}^3 \sum_{j = 1}^3 \frac{(O_{ij} - E_{ij})^2}{E_{ij}} \\
+ & = \frac{(5 - 12.6)^2}{12.6} + \frac{(12 - 3.6)^2}{3.6} + \ldots + \frac{(1 - 4.7)^2}{4.7} \\
+ & = 39.582.
+\end{align*}
+
+If the assumptions of the test hold (see section below on [assumptions](#conditions)), this is a realisation from a $\chi^2_{4}$ distribution, if the null is true. (Note that the number of cells with expected values < 5 would indicate this is not a good approximation in this case. However, in the interests of explanation we will continue with the example as if it were fine.). Using a $\alpha = 0.05$ level of significance, $\chi^2_4(0.95) = 9.49$ from tables.
+
+Since our $T = 39.582$ lies further in the tail than the critical value of 9.49, we reject the null hypothesis in favour of the alternative and conclude that, at the 5% level of significance, hair and eye colour are dependent.
+
+<a name="conditions"></a>
+
+### Assumptions of the Test of Independence
+
+- Cells should contain frequencies (counts);
+
+- Variable categories are *mutually exclusive*. Individuals cannot belong to more than one category;
+
+- Individuals can only contribute to one cell: the sum of the cells must equal the total number of individuals measured. This is related to the second dot point above;
+
+- Individuals must be independent of each other;
+
+- Variables must be categorical - usually nominal though can be ordinal, or interval or ratio that have been "categorised". However, note that in these latter cases there is usually an associated loss of information and it is therefore not recommended that you categorise numerical data just to fit it into a test of independence - there are many other more suitable analyses available for numerical data.
+
+- The result that the test statistic, Equation $\eqref{eq:chisq-test}$, has a $\chi^2$ distribution is approximate. There are several different versions of the rules of thumb needed for this approximation to be reasonable. They all usually boil down to the proportion of cells with expected frequencies greater than 5. For example, the `chisq.test()` function in `R` issues a warning if any expected cell frequency is less than 5. Other sources suggest no fewer than 80% of cells contain expected values smaller than 5, with no expected counts less than 3. Essentially the result is *asymptotic*, and therefore the sample size needs to be large enough for the finite approximation to hold to an acceptable degree. 
+
+### Using R:
+
+The function `chisq.test` can be used to do a $\chi^2$ test of independence. It expects a table object (or a matrix representing a two-way contingency table), or you can also enter the names of the two factor variables if the data are in non-aggregated form. Note that this function does other things as well, none of which are within the scope or level of the material we are looking at.
+
+To demonstrate its use, let's look at the hair and eye colour data again.
+
+The hair and eye colour data is contained in the `SciDatAnalysis` library you (hopefully) successfully installed following the instructions at the beginning of these notes. Use this library in the usual way.
+
+```{r setup, include = FALSE}
+install.packages("R/SciDatAnalysis_0.1.0.tar.gz", repos = NULL, type="source")
+pacman::p_load(learnr, agricolae, tidyverse, car, MASS, SciDatAnalysis)
+# library(SciDatAnalysis)
+# library(tidyverse)
+# library(agricolae)
+# library(car)
+# library(MASS)
+
+cars.sub <- data.frame(price = car.prices$price, wheelbase = car.prices$wheelbase, horsepower = car.prices$horsepower)
+fit2 <- lm(log(price) ~ wheelbase + horsepower, data = cars.sub)
+
+n.cars2 <- select_if(car.prices, is.numeric)
+fit1a <- lm(price ~ fueltype + carbody + drivewheel + wheelbase +
+             carheight + cylindernumber + horsepower, data = car.prices)
+
+fit2a <- lm(log(price) ~ fueltype + carbody + drivewheel + wheelbase +
+             carheight + cylindernumber + horsepower, data = car.prices)
+prices.stp <- stepAIC(fit2a, scope = list(upper = ~ .,lower = ~ 1), trace = 0)
+```
+
+If you want to see information about the hair and eye colour data, use the help facility:
+
+```{r he-dat, exercise = T}
+?hair.eyes
+```
+
+Do hair and eye colour depend on each other?
+
+```{r hetest, exercise = T}
+hair.eye <- chisq.test(hair.eyes$eye, hair.eyes$hair)
+hair.eye$expected
+hair.eye
+```
+
+We need to heed all warnings. 
+
+Four of the nine cells contain expected cell counts less than 5. We should be wary of the results we obtain from this analysis. For the sake of the example, let's look at the results anyway.
+
+
+The p-value is much smaller than the level of significance, 0.05. We reject the null in favour of the alternative, and conclude that hair colour and eye colour are not independent of each other (but note the warning above).
+
+
+### Excercise:
+
+1. The `SciDatAnslysis` library contains a data set called `survey`. Examine the `survey` data. You might want to start by accessing the help on the data for a description of the variables etc.
+
+```{r survhlp, exercise = T}
+
+```
+
+2. Examine the relationship between sex (`Sex`) and smoking status (`Smoke`). Try faceting with a barplot using both the raw counts and proportions:
+
+```{r facbarsurvprop, exercise = T}
+library(tidyverse)
+
+# Make a new dataset with counts and percentages. Note there are NAs in the data, 
+# so filter them out first to match chisq.test().
+surv.prop <- survey %>%
+  filter(Sex != "NA", Smoke != "NA") %>%
+  count(Sex, Smoke) %>%
+  group_by(Sex) %>%
+  mutate(proportion = n / sum(n)) %>%
+  ungroup()
+
+surv.prop
+
+# Faceted Barplot - raw counts
+ggplot(surv.prop, aes(x = Smoke, y = n)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = n), vjust = 1.5, color = "white", 
+            size = 3.5) +
+  labs(title = "Smoking Status by Sex",
+       x = "Smoking Status",
+       y = "Frequency") +
+  facet_wrap(~Sex) +
+  theme_bw() +
+  theme(panel.grid = element_blank()) 
+```
+
+***Exercise:*** Try modifying the above code to create a barchart using proportions instead of frequencies - note you might have to round the proportions to say 2 decimal places if you want to label your bar heights (`aes(label = round(proportion, 2))`) in `geom_text`.
+
+What do these graphs suggest regarding any dependency between smoking status and sex?
+
+3. Do a test of independence for smoking status and sex by hand by following the example given above. To create the two-way contingency table use
+
+```{r tabl, exercise = T}
+table(survey$Sex, survey$Smoke)
+```
+
+4. Check your working, including the expected values and test statistic, in R using the `chisq.test()` function.
+
+```{r survtest, exercise = T}
+chisq.test(survey$Sex, survey$Smoke)
+```
+
+5. Try a test of independence on `Sex` and exercise status, `Exer`. 
+
+```{r sexexertest, exercise = T}
+chisq.test(survey$Sex, survey$Exer)
+```
+
+## 2. Student's Two (Independent) - Sample T-Test
+
+Student's two sample $t$-test is used to test hypotheses comparing two population means. William Gosset was Chief Experimental Brewer at the Guinness brewery in Dublin. Guinness apparently had a policy of not allowing employees to publish their findings, so Gosset used the pseudonym "Student" to disseminate his work to the academic community. In fact the $t$-distribution was derived (in a Bayesian context) well before Gosset's work, but as with much of academia, popularisation often wins over correct attribution.
+
+We assume we have two independent samples ($Y_{1}, \ldots, Y_{m}$ and $X_{1}, \ldots, X_{n}$) taken from normally distributed populations, where
+
+$$Y \sim N(\mu_Y, \sigma)$$ and $$X \sim N(\mu_X, \sigma)$$
+
+Note the assumption of equal variance in the two populations. There are "adjustments" that can be made if this assumption is not valid for any particular set of samples (R uses the "Welch" or "Satterthwaite" degrees of freedom approximation/adjustment - also note that R assumes unequal population variances by default). We will focus on the equal-variance case here, but note that Welch's degress of freedom adjustment is implemented in all good statistial software for situations where the assumption of equal population variance is suspect.
+
+(*Question:	Why would a test to compare means be of interest if populations have unequal standard deviations?*)
+
+We are most commonly interested in testing the hypotheses:
+
+\begin{align*}
+H_0: & (\mu_Y - \mu_X) = \mu_0 \\
+H_1: & (\mu_Y - \mu_X) \neq \mu_0 
+\label{eq:ttest-hyp} \tag{4}
+\end{align*}
+
+where $\mu_0$ denotes the hypothesised difference between population means (this is, more often than not, 0). There are, of course, one-tailed versions of these hypotheses also.
+
+The test statistic used to test hypotheses $\eqref{eq:ttest-hyp}$ is:
+
+\begin{equation}
+T = \frac{(\overline{Y} - \overline{X}) -(\mu_Y - \mu_X)}{S_p \sqrt{\frac{1}{m} + \frac{1}{n}}} ,
+\label{eq:ttest} \tag{5}
+\end{equation}
+
+where 
+
+$$
+S_p^2 = \frac{(m-1)S_Y^2 + (n-1)S_X^2}{m+n-2},
+\label{eq:pooled-var} \tag{6}
+$$
+
+$\overline{X}$ and $\overline{Y}$ denote the sample means of the two samples, and $S_Y$ and $S_X$ denote the sample standard deviations of the two samples.
+
+Under the above conditions it can be shown that the test statistic given by $\eqref{eq:ttest}$ has a $t$ distrubition with degrees of freedom equal to $m+n-2$ if the null hypothesis is true.
+
+### Using R
+
+You can do a two independent sample $t$-test in R in several ways (eg this test is a special case of a one-way ANOVA). However, the function `t.test` is specifically designed for this purpose (in fact, it will also do one-sample and paired versions of the $t$-test). 
+
+The `t.test` function will accept input in two ways, depending on what form you have your data in: 
+
+1. each sample can be given as a separate variable:
+`t.test(x, y)`
+
+2. you can use a formula interface (only for two-sample tests):
+`t.test(y ~ group)`
+Note `group` should be a two-level catagorical factor identifying which group the correspoding `y` observation belongs to.
+
+See the help for more arguments (`?t.test`). In particular, look at the arguments `mu = `, `alternative = `, and `var.equal = `. Make sure you know what they do and how to use them.
+
+### Exercises:
+
+**Q1.** 
+
+Researchers are interested in whether the mean weight for Tweed River crabs is greater than the mean weight for Brisbane River crabs. Using strict experimental protocols they randomly select and weigh 16 Tweed River crabs and 25 Brisbane River crabs. Based on this data they calculate the following sample statistics:
+
+- Tweed River: $\overline{X}_T = 240$ grams; $S_T = 24$.
+- Brisbane River: $\overline{X}_B = 215$ grams; $S_B = 18$.
+
+Based on this sample data, and assuming the two crab weight populations satisfy the assumptions for the $t$-test, test the researcher's hypothesis using an $\alpha =  0.05$ level of significance.
+
+**Q2.**
+
+*Before doing the tests below, check the model assumptions graphically (a boxplot is fine) and adjust your test arguments accordingly. Note carefully the way R orders factor levels - this impacts the calculated test statistic.*
+
+Using the `survey` data in the `SciDatAnalysis` library, test the hypothesis that male students are, on average, at least 10cm taller than female students in the following two ways: (Note, assume missing values are "missing at random".)
+
+1. By hand. Note there are missing values in the `Height` observations so you will need to "filter them out" (ie remove them, as we used to say) when using R to calculate the mean, sd, and sample size for each sex. As with most things in R, there are lots of ways to do this. For example, a traditional R approach using the `by` (or `tapply`) function:
+
+```{r bysurv, exercise = T}
+boxplot(Height ~ Sex, data = survey)
+
+by(survey$Height, survey$Sex, 
+       function(x) c(mean = mean(x, na.rm = T), sd = sd(x, na.rm = T), n = sum(!is.na(x))))
+```
+
+2. Using the `t.test` function. Try it with and without the assumption of equal variance. What are the differences?
+
+```{r survttest, exercise = T}
+t.test(Height ~ Sex, data = survey, mu = -10, 
+       alternative = "less", var.equal = TRUE)
+```
+
+3. Write your conclusion to the hypothesis test. Ensure you include both a statistical conclusion and a plain English conclusion. If you don't know what the difference is, ask.
+
+## 3. Analysis of Variance - Multiple Treatment Comparisons
+
+Once an ANOVA has been carried out and has identified that there are some differences between the treatment means, it is necessary to identify which treatments are different from each other. The familiar t-test was designed to compare between **two** treatments and there are potential problems when pairwise comparisons are made between more than two treatments. Because of the element of chance and uncertainty involved in any statistical test, in a situation where a large number of similar tests are carried out there is a potential to find significant differences simply by chance. The use of the t-test is one such situation; a similar problem arises when correlation coefficients are found between all possible pairs of variables in a multivariate situation.
+
+Many tests exist for this purpose and four will be considered here. The decision as to which test to use is partly made by the underlying assumptions of each test, and the degree to which they can be met by the data set of interest. However, often the final decision becomes a personal choice between several that are equally possible; alternatively an editor or referee may dictate the test preferred if an article is to be published in a particular journal.
+
+### 3.1 Using the Protected t-test and the Least Significant Difference
+The original t-test was designed to compare two treatment means.  If this test is simply extended and used to carry out all possible pairwise comparisons between more than two treatments, spurious significances may be found simply because so many of the tests are done - each test may be at a prescribed level of significance related to its specific type I error probability, but over all the possible tests this probability of error (the experimentwise error) may be quite different.  To overcome this problem a requirement is imposed that the $F$-test in the ANOVA **must** be significant before any $t$-tests are carried out.  If the overall test for significance says that there are no significant differences then no further testing is carried out.
+
+The $t$-test with this conditioning on the outcome of the $F$-test is known as the **Protected $t$-test**. It is implemented in R by installing and attaching the `agricolae` library and using the `LSD.test()` function contained in that library.  Recall that the standard deviation used in the protected $t$-test is the best estimate of $s$, which is the square root of the error mean square in the ANOVA.
+ 
+Even though significant differences may occur in pairwise $t$-testing, if the $F$-test in the ANOVA is non-significant, the null hypothesis that all treatment means are equal must be accepted.
+
+A number of authors do not recommend the protected $t$-test, believing that it leads to too many spurious significances. However, other authors do favour its logical and consistent approach and believe that, providing the protection of the global $F$-test is used, it is preferred over its more conservative alternatives. 
+
+**NOTE:** There is no such thing as an **LSD test** - the test reflects the probability distribution used and when LSD's are used this is t; using LSD's is a short cut for the t-test.
+
+### 3.2 Tukey's Honestly Significant Difference
+
+An analysis of variance (ANOVA) is carried out to test the standard hypotheses that the treatment means are all equal.
+ 
+\begin{align*}
+H_0 & : \mu_1 = \mu_2 = \ldots = \mu_k  & & \textit{treatment means are all equal}\\
+H_1 & : \mu_i \neq \mu_j \text{ for some } (i, j), i \neq j & & \textit{treatment means are not all equal}
+\end{align*}
+
+Test the Variance Ratio using the F-test – a global test.
+
+**If H0 is accepted**, i.e. the means are not significantly different, then **STOP**.
+
+**If H0 is rejected** proceed to some form of multiple comparison testing to identify which treatment means are different to each other.
+
+If the null hypothesis is rejected using the global test in the ANOVA then proceed with pair-wise comparisons of the means. 
+
+Calculate the standard error of a mean as: $SE_{\bar{X}} = \frac{s}{\sqrt{n}}$, 
+where $s$ = Root MSE in the ANOVA and $n$ is the number of replicates in the treatment.
+
+From the Studentised Range, $q$ tables, Table B5 in Zar or `qtukey` in R, find the critical value which depends on:
+
+- $\alpha$ - level of significance;
+- $\nu$ - error degrees of freedom in the ANOVA table;
+- $k$ - number of treatments.
+
+Calculate Tukey's Honestly Significant Difference:
+
+$$ \textit{THSD}_{\alpha} = q_{\alpha} \times SE_{\bar{X}} $$
+
+Obtain a **table of differences** for the treatment means.
+
+Compare the mean differences given in the table of differences with the $\textit{THSD}_{\alpha}$ to determine the significant ones. Summarise your results clearly in written English.
+
+**NOTE:**
+The Table of Studentised Ranges, or *q* values, is two-tailed; an $\alpha$ = 0.05 means two tails each of 0.025. This table is used for both the Tukey test and the SNK test which follows.
+
+#### Unequal Replication of Treatments
+
+For unequal sample sizes (i.e. unequal replication of the treatments):
+Calculate an average standard error of the mean:
+
+$$\textit{SE}_{\textit{avg}\bar{X}}= \sqrt{ \frac{s^2}{2} \left( \frac{1}{n_1} + \frac{1}{n_2} \right)}$$
+
+Note that separate THSD's will be needed for each comparison with different replicates.
+
+**OR**
+
+Carry out a direct test as:
+
+$$ T = \frac{\overline{X}_i - \overline{X}_j}{\textit{SE}_{\textit{avg}\bar{X}}} $$
+
+Then use the fact that under $H_0:\mu_1 = \mu_2,$ $T \sim q_{\nu, k}$.
+
+A direct test is needed for **each pair** of means.
+
+#### Using R
+To carry out a Tukey HSD test we include the agricolae library in R and use the `HSD.test()` function instead of the previous `LSD.test()` which was used for the protected t-test.
+
+### 3.3 Student-Newman-Keuls Least Significant Range (SNKLSR)
+
+The SNK test takes into consideration the number of treatments, arranged in rank order, over which a pair of treatments is being compared; the difference needed for significance for two treatment means which are ranked side by side is different from the difference needed for two means which have other treatments in between them in the rank order.
+
+The SNK test is essentially the same as the THSD except it uses a different $q$ value depending on the range of treatment means involved instead of a fixed $k$, representing the total number of treatments.
+
+It is known as a **MULTIPLE RANGE TEST**.
+
+Other multiple range tests such as Duncan's Multiple Range Test, which is used in agricultural research, are also available.
+
+The SNK is **less conservative** than Tukey's test - i.e. it is less likely to accept $H_0$ when it should reject it.
+
+The SNK is **more conservative** than the t- test - i.e. it is more likely to accept $H_0$ when it should reject it.
+
+An analysis of variance (ANOVA) is carried out to test the standard hypotheses that the treatment means are all equal
+ 
+\begin{align*}
+H_0 & : \mu_1 = \mu_2 = \ldots = \mu_k  & & \textit{treatment means are all equal}\\
+H_1 & : \mu_i \neq \mu_j \text{ for some } (i, j), i \neq j & & \textit{treatment means are not all equal}
+\end{align*}
+
+Test the Variance Ratio using the F-test.
+
+**If H0 is accepted**, i.e. the means are not significantly different, then **STOP**.
+
+**If H0 is rejected** proceed to some form of multiple comparison testing to identify which treatment means are different to each other.
+
+Calculate the standard error of a mean as: $SE_{\bar{X}} = \frac{s}{\sqrt{n}}$, 
+where $s$ = Root MSE in the ANOVA and $n$ is the number of replicates in the treatment.
+
+From the Studentised Range, $q$ tables, Table B5 in Zar or `qtukey` in R, find the Studentised Significant Ranges which depend on the following four variables – note that for SNK there will be $k-1$ $q$ values to read from the table, giving $k-1$ SNK ranges:
+
+- $\alpha$ - level of significance;
+- $\nu$ - error degrees of freedom in the ANOVA table;
+- $k$ - number of treatments;
+- $p$ - the number of means in rank order (smallest to largest) between and including the two means to be compared.
+
+Note that $p$ = 2 when the means are adjacent, $p$ = 3 if there is one mean in between the two being compared, and the most extreme comparison will be between the largest and smallest means when $p$ will equal $k$, the number of treatments.
+
+Calculate the SNK Least Significant Ranges: 
+
+$$ \textit{SNKLSR}_{\alpha, p} = q_{\alpha, p} \times SE_{\overline{X}} $$
+
+Obtain a table of differences for the treatment means.
+
+Compare the mean differences given in the table of differences with the relevant $\textit{SNKLSR}_{\alpha, p}$ values to determine the significant differences. Summarise your results clearly in written English.
+
+#### Using R
+
+To carry out an SNK test we include the `agricolae` library (if it isn’t already attached from a previous analysis) and use the `SNK.test()` function on the fitted `aov()` model.
+
+
+### 3.4 The Bonferroni Adjustment to the LSD
+
+The problem with the $t$-test is that the set level of significance applies to a single comparison of two means – this is known as a *Type I comparison error rate*. When there are a lot of such comparisons, one or more may be significant simply by chance, and there is no way of knowing this. Multiple range tests such as SNK make such an allowance and provide a control across the whole set of comparisons. This is known as an *experiment wise error rate*. What is needed is a way of controlling the experiment wise error rate, that is, the possible error **across all the paired comparisons**, when the $t$-test is used. 
+
+A simple modification to the $t$-test was proposed by Bonferroni to achieve this. To obtain a ‘reliable’ critical value for $t$, the nominated significance level is divided by the number of tests that will be carried out. For example, if four treatment means are to be compared there will be six individual tests. Recall that if a significance level of 0.05 is required, then the critical value for $p$ is 0.025 as the multiple comparisons of treatment means are two tailed $t$-tests. Therefore the probability used to obtain the ‘reliable’ critical $t$ is 0.025/6 = 0.0041666. Critical tables with such a probability are not usually available. However, the following R code will produce the required value for a given $\alpha$, degrees of freedom (df), $\nu$, and number of treatments, $k$.
+
+```{r bonf, exercise = T}
+bonf.val <- function(alpha = 0.05, k, df) qt(1-((alpha/2)/choose(k, 2)), df = df)
+
+# eg alpha = 0.05, 4 treatment groups, error df = 16 from ANOVA table:
+bonf.val(k = 4, df = 16)
+```
+
+#### Using R
+
+To carry out a Bonferroni test we use the `LSD.test()` function  from the `agricolae` library with argument: `p.adj = “bonferroni”` since the Bonferroni test is just an adjusted version of the LSD.
+
+### Exercise
+
+A study has been carried out to determine the strontium concentration (mg/ml) in six different bodies of water - it is suspected that this pollutant may become a problem in the future and a base line set of data is required. The data are given below. Note that the names of the water bodies have been altered to protect the innocent.
+
+| Joe Lake | Wallaby Pond | Teatree Swamp | Rock River | Flo Dam | Edna Bay |
+|:--------:|:------------:|:-------------:|:----------:|:-------:|:--------:|
+|   56.3   |     39.6     |      28.2     |    32.5    |   46.3  |   41.0   |
+|   54.1   |     40.8     |      33.2     |    36.1    |   42.1  |   44.1   |
+|   59.4   |     37.9     |      36.4     |    38.1    |   43.5  |   46.4   |
+|   62.7   |     37.1     |      34.6     |    39.2    |   48.8  |   40.2   |
+|   60.0   |     43.6     |      29.1     |    34.2    |   43.7  |   38.6   |
+|   57.3   |     42.4     |      31.0     |    36.1    |   40.1  |   36.3   |
+
+This data is available in the `SciDatAnalysis` library in a dataframe called `strontium`.
+
+1. Write down the hypotheses you will be testing using this data.
+
+2. Use the help function to get information about this data set.
+
+3. Do some exploratory data analysis (EDA) on the data.
+
+4. Write down the model you propose to fit to this data (one-way ANOVA) in order to test these hypotheses.
+
+5. Fit this model to the data using the `aov` function in R and critique this fit graphically (residual diagnostics).
+
+6. If you believe the residual diagnostic plots show the fit is adequate, examine and interpret the ANOVA output using the `summary` function.
+
+7. If you don't already have it, install the `agricolae` library. Load this library and run the 4 multiple treatment comparison (MTC) tests on the data to determine where significant mean differences in strontium lie across the 6 water bodies. Compare and contrast your findings across the 4 MTC methods. Make sure you understand the differences in findings you see. 
+
+
+## 4. Multiple Linear Regression
+
+Multiple linear regression is a big topic (indeed, you could take several undergraduate courses on this and related topics). We will, of necessity, only scratch the surface here and deal with the most fundamental aspects.
+
+Multiple linear regression refers to the situation where a single response variable, $Y_i, i = 1, \ldots, n$ is being modelled by multiple (say $p$) explanatory variables, $X_{ji}, i = 1, \ldots, n, j = 1, \ldots, p$. Importantly, the model is **linear**. In statistics, the word **linear** refers to the model parameters, not the explanatory variables $X_{ij}$. Thus linear models also refer to, for example, polynomials in the $X_{ij}$.
+
+The response variable must be numerical, whereas the explanatory variables can be of any type.
+
+Statistically modelling a variable using other variables is done for two main reasons - *explanation* or *prediction*. Each brings its own considerations which we will not go into here. Whatever the reason for modelling, you should always bear in mind the following quote by the statistician (and modeller) George E.P. Box:
+
+> Now it would be very remarkable if any system existing in the real world could be exactly represented by any simple model. However, cunningly chosen parsimonious models often do provide remarkably useful approximations. For example, the law PV = RT relating pressure P, volume V and temperature T of an "ideal" gas via a constant R is not exactly true for any real gas, but it frequently provides a useful approximation and furthermore its structure is informative since it springs from a physical view of the behavior of gas molecules. For such a model there is no need to ask the question "Is the model true?". If "truth" is to be the "whole truth" the answer must be "No". The only question of interest is "Is the model illuminating and useful?". 
+
+Or, the more popular version:
+> Essentially, all models are wrong, but some are useful. 
+
+Box uses this notion repeatedly in his academic works, and more often than not goes on to say that the approximate nature of the model must always be borne in mind whenever drawing conclusions from them. He even has something to say on linear models:
+
+> In other words, any model is at best a useful fiction — there never was, or ever will be, an exactly normal distribution or an exact linear relationship. Nevertheless, enormous progress has been made by entertaining such fictions and using them as approximations.
+
+### Model and Assumptions
+
+The model takes the general form
+
+\begin{equation*}
+Y_i = \beta_0 + \beta_1X_{1i} + \beta_2 X_{2i} + \ldots + \beta_p X_{pi} + \epsilon_i, \text{     }i = 1, \ldots, n. 
+\label{eq:mlr} \tag{7}
+\end{equation*}
+
+The model parameters $\beta_j, j = 1, \ldots, p$ are known as *regression coefficients* and measure the average population effect their corresponding explatory variable, $X_j$ has on the response, $Y$. The parameter $\beta_0$ represents the *intercept term*: the average value of $Y$ when all the $X_j = 0$. This is included in the model for mathematical reasons, but its estimate is often nonsensical due to the fact that it is often an extrapolation (ie values of $Y$ were not measured at $X_j = 0, j = 1, \ldots, p$).
+
+Model $\eqref{eq:mlr}$ is based upon the following assumptions:
+
+1. Normality: The error terms $\epsilon_i, i = 1, \ldots, n$ are normally distributed with mean zero and constant variance, $\sigma^2$, $\epsilon_i \sim N(0, \sigma^2)$. Note: This assumption implies that the $Y_i$ are also normally distributed but *this is an unusable assumption in terms of model checking*, since by definition the mean of $Y_i$ changes with the $X_j$ for each $i$. You will often hear people talk about checking $Y$ to see if it is normal - *this is absolutely pointless and in fact can be completely misleading!*.
+
+2. Homoscedasticity: the variance of the error term is constant.
+
+3. The responses, $Y_i$, and hence the errors, $\epsilon_i$, are independent: There is no correlation between successive error terms.
+
+4. Independence of $\epsilon_i$ and $X_{ji}$. The error terms are independent of the values of the independent (explanatory) variables.
+
+5. No multicollinearity: The independent variables, $X_j$, are not correlated with each other.
+
+6. The independent variables, $X_j$, are measured without error. 
+
+### Important Quantities
+
+#### Coefficient of Multiple Determination, Adjusted $R^2$
+
+Measures the proportion of variation in the response variable explained by the model (the $X_j$). Note that, mathematically, adding independent variables to the model (even if they are completely unrelated to the response and add nothing to the explanatory power of the model) will decrease the error variability, and will therefore increase the $R^2$. So we could artificially increase $R^2$ just by adding more and more stupid variables to our model (we could get it to 1 in this way if we wanted).
+
+To overcome this issue we use the adjusted $R^2$. The adjusted $R^2$ penalises the unadjusted $R^2$ based on the number of independent variables in the model. In simple linear regression (only one dependent variable) we do not need to worry about using the adjusted $R^2$. In multiple regression, we do.
+
+#### Testing Overall Significance of the Model
+
+Is there anything in the model that has explanatory power? We can test the overall significance of the model via testing the hypotheses
+
+\begin{align*}
+H_0: & \beta_1 = \beta_2 = \ldots = \beta_p = 0 \\
+H_1: & \text{At least one of the  } \beta_j \neq 0
+\end{align*}
+
+Software like R can create an ANOVA table for the regression, and the Variance Ratio (F-statistic in R) in that table will test the above hypotheses. Also note that R gives the F-statistic and associated $p$-value for testing overall model significance in the `summary` output of the regression model when you use `lm`.
+
+#### Root Mean Square Error, RMSE
+
+The standard error of the regression. The estimate of the standard deviation of the errors $\epsilon_i$ in model $\eqref{eq:mlr}$. The standard deviation remaining in $Y$ after accounting for the $X_j$. It mainly concerns the predictive power of the model. It is called *residual standard error* in R.
+
+#### Inferences about Individual $\beta$s
+
+As in simple regression, we can calculate a test statistic for any individual parameter, $\beta_j$, using the sample estimate, $\hat{\beta_j}$, and the standard error of that estimate, $SE(\hat{\beta_j})$. The resulting statistic has a student’s $t$-distribution with $n-(p+1)$ (error) degrees of freedom (remember $p$ = the number of independent variables).
+
+The parameter estimates and their corresponding standard errors are shown under the `Estimate` and `Std. Error`columns, respectively, of the `Coefficients:` table produced by the R `summary` output for the `lm` function. The test statistic is calculated by dividing the estimate by its standard error, and is shown in the `t value` column. The $p$-value for this statistic appears in the final row of the `Coefficients` table, labelled $Pr(>|t|)$. A p-value less than 0.05 (or whatever you have chosen $\alpha$ to be) indicates that the corresponding parameter is significantly different from 0.
+
+### Assumption Checking
+
+Before using a model to do inference or prediction, we must check the assumptions hold for the data we are using. The most common diagnostic checks involve graphically assessing the error assumptions using *residuals* - the difference between the observed $Y_i$ and the values predicted by the model, $\hat{Y}_i$. The residuals are, for lack of a better term, the "estimates" of the model error terms.
+
+R has a special plot method for linear models that do these diagnostic plots for us (we already tried these in the ANOVA section of the workshop). 
+
+Here's an example taken from the help file for `lm`. We will quickly go over what each graph checks in the workshop.
+
+```{r lmexample, exercise = T}
+ctl <- c(4.17,5.58,5.18,6.11,4.50,4.61,5.17,4.53,5.33,5.14)
+trt <- c(4.81,4.17,4.41,3.59,5.87,3.83,6.03,4.89,4.32,4.69)
+group <- gl(2, 10, 20, labels = c("Ctl","Trt"))
+weight <- c(ctl, trt)
+lm.D9 <- lm(weight ~ group)
+lm.D90 <- lm(weight ~ group - 1) # omitting intercept
+
+anova(lm.D9)
+summary(lm.D90)
+
+opar <- par(mfrow = c(2,2), oma = c(0, 0, 1.1, 0))
+plot(lm.D9, las = 1)      # Residuals, Fitted, ...
+par(opar)
+```
+
+### Predictions
+
+There are two kinds of overall prediction types we can attempt with any model: *interpolation* or *extrapolation*. As a general rule, interpolation is safe since it is based on predicting at the observed values of the $X_j$ used to build the model. Extrapolation, on the other hand, is generally not safe (though that has not stopped thousands of researchers doing it anyway!). Whether a prediction is an extrapolation or an interpolation can become more difficult to determine as the dimensionality of the model increases.
+
+There are also two sub-classes of prediction we can make once we have decided whether we are going to interpolate (because we are sober, cautious, and prudent scientists) or extrapolate (oh dear...) - predict the mean value (`confidence`) or predict the individual value (`prediction`) of the response at a given set of $X_j$ values. The actual predicted value is the same in both cases, but the prediction error is greater when we want to predict individual values due to the increased uncertainty involved when compared to predicting at the mean.
+
+The R function used to predict values from a linear model is `predict`. You can give the function a new set of $X_j$ values at which to predict. If you leave this argument blank it will simply predict at the observed values of the $X_j$ used to build the model.
+
+The argument `interval` lets you create `confidence` or `prediction` intervals. In the following code we make up some data, fit a linear model to it, and then predict both individual and mean values at new $X$ values.
+
+```{r preds, exercise = T}
+# Make some random X data:
+x <- rnorm(20, mean = 5, sd = 1)
+
+# Make Y data from that (simple linear regression):
+y <- 2 + 3*x + rnorm(20, 0, 5)
+
+# Fit a linear model to the data:
+fit <- lm(y ~ x)
+summary(fit)
+
+# Now create some new X data to predict at:
+
+new.dat <- data.frame(x = seq(2, 7, 0.1))
+
+pred.c <- predict(fit, new.dat, interval = "confidence") # Predict mean values
+pred.p <- predict(fit, new.dat, interval = "prediction") # Predict individual values
+
+cat("\n\n Predicted Mean Values \n")
+head(pred.c)
+cat("\n\n Predicted Individual Values \n")
+head(pred.p)
+```
+
+### Model Selection
+
+When we have multiple $X$s in a model, a natural question is "how do I select the "best" model?". There are many answers to that question, and it depends on whether you are modelling for explanatory purposes or prediction purposes. We will discuss one approach that uses something called AIC. 
+
+Those people that do know AIC know it as "Akaike Information Criterion", named after the Japanese statistician who first postulated it. However, Akaike never called it this. In fact he called it "An Information Criterion" originally. The AIC is a penalised goodness of fit statistic, where goodness of fit is defined by the likelihood (we will not discuss likelihood here). The penalisation term is based on the number of parameters in the model, where the penalisation increases with the number of parameters. 
+
+It is very important to note that AIC will allow us to compare competing models for *the same data (response)*. You cannot compare models with different responses - *this includes transformed responses*. You also need to be careful with missing values in the $X_j$, as including or excluding those variables will change the data and invalidate the use of AIC for comparing between them.
+
+The `MASS` library has a function `stepAIC` that will do stepwise model selection based on AIC for linear models (it has sanity checks to stop users doing inappropriate things). We will look at how it is used in the exercise that follows. 
+
+### Exercise
+
+The data contained in the data frame `car.prices` is a subset of a larger set of data recorded in order to see what vehicle attributes, if any, influence the price of cars in the US. You should assume all measurements are imperial unless otherwise stated. See the help file for this data for more details.
+
+To keep the analysis simple, we will focus on two explanatory variables only: `wheelbase` and `horsepower`. A fuller analysis for this data is done afterwards for anyone who is interested.
+
+1. Examine the first few rows:
+
+```{r headcars, exercise = T}
+head(car.prices)
+```
+
+2. Examine the data with a `pairs` plot:
+
+```{r carpairs, exercise = T}
+cars.sub <- data.frame(price = car.prices$price, wheelbase = car.prices$wheelbase, horsepower = car.prices$horsepower)
+pairs(cars.sub)
+```
+
+There's fairly clear evidence in the graph that the two explanatory variables, `wheelbase` and `horsepower`, are approximately linearly related to the response (`price`). There's also some evidence that the relationships may be slightly heteroskedastic. We'll worry about that if it becomes an issue further down the track.
+
+3. So, based on this graph we will postulate an initial plausible model and fit it to the data. This model is
+
+$$
+\text{price}_i = \beta_0 + \beta_1 \times \text{wheelbase}_i + \beta_2 \times \text{horsepower}_i + \epsilon_i
+$$
+ 
+and we fit it to the data (and check the model assumptions) using:
+ 
+```{r carfit, exercise = T, setup.exercise = "carpairs"}
+fit1 <- lm(price ~ wheelbase + horsepower, data = cars.sub)
+
+par(mfrow = c(2, 2))
+plot(fit1)
+par(mfrow = c(1, 1))
+```
+
+The diagnostic plots don't look particularly good - there is evidence in the residual plot and in the scale-location plot of heteroskedasticity. The upper tail of the residuals is longer than you'd expect if they were normally distributed. 
+
+We can often mitigate some of these issues with a transformation of the response - in this case we will try a natural logarithm transformation.
+
+```{r logfit, exercise = T}
+fit2 <- lm(log(price) ~ wheelbase + horsepower, data = cars.sub)
+
+par(mfrow = c(2, 2))
+plot(fit2)
+par(mfrow = c(1, 1))
+```
+
+These look a bit better - there are other things we could do but in the interests of keeping things simple we shall declare the model fit adequate and move on.
+
+4. Examine the results of our model.
+
+```{r summarycars, exercise = T}
+summary(fit2)
+```
+
+We can see that both `wheelbase` and `horsepower` are significant. The sign of their effects indicates that as each increase, so too does the (log) price of a car, on average. 
+
+5. Finally, now that we have a working model, we can use it to predict the (log) price of vehicles we haven't measured, by predicting at these vehicle's wheelbase and horsepower values. Always keep in mind the previous warning about extrapolation. We will pretend we are interested in predicting the (log) price of 5 "new" vehicles with the following wheelbase and horsepower values:
+
+```{r predcardat, exercise = T}
+new.data <- data.frame(wheelbase = sample(seq(100, 110, length = 5), 5), 
+                       horsepower = sample(seq(150, 200, length = 5), 5))
+new.data
+
+pred.c <- predict(fit2, new.data, interval = "confidence") # Predict mean values
+pred.p <- predict(fit2, new.data, interval = "prediction") # Predict individual values
+
+cat("\n\n Predicted Mean Values (log Scale) \n")
+cbind(new.data, pred.c)
+cat("\n\n Predicted Individual Values (log Scale) \n")
+cbind(new.data, pred.p)
+```
+
+### Fuller Analysis (For your Edification Only)
+
+1. As a first step, we should examine the data using a scatterplot matrix on the numerical variables:
+
+```{r smcars, exercise = T}
+library(dplyr)
+n.cars2 <- select_if(car.prices, is.numeric)
+pairs(n.cars2)
+```
+
+2. There is some indication in the pairs plot that there may be multicollinearity present. Fit a model and examine the variance inflation factors (VIF). A VIF > 5 indicates the variable may be problematic. (Install the `car` package if you do not already have it).
+
+```{r vifcar, exercise = T}
+library(car)
+vif(lm(price ~ ., data = n.cars2)) %>% print # anything over say 5 might be problematic
+```
+
+Note that several of the variables that describe the size of the vehicle have high VIFs. We do not need all of them in the same model, so let's pick just one or two (based on what will represent car dimensions best). Also, note that horesepower and MPG appear strongly related. We shall remove MPG from further consideration as, because we are dealing with USA data, horsepower is probably a more important pricing consideration than economy! (Note: never let your personal feelings/biases influence your analytical choices....)
+
+```{r vif2, exercise = T}
+vif(lm(price ~ . - carwidth - curbweight - citympg, data = n.cars2)) %>% print 
+```
+
+3. Let's postulate an initial plausible model based on what we've just learned, and fit it to the data:
+
+```{r fitmod, exercise = T}
+fit1a <- lm(price ~ fueltype + carbody + drivewheel + wheelbase +
+             carheight + cylindernumber + horsepower, data = car.prices)
+
+par(mfrow = c(2, 2))
+plot(fit1a)
+par(mfrow = c(1, 1))
+```
+
+This model fit is clearly poor -  the model assumptions are not satisfied. Perhaps a transformation of the data could help. Let's see what a Box-Cox transformation suggests in the `MASS` library (`boxcox`). Careful here, as the `car` library also has a Box-Cox transformation function called `box.cox`.
+
+```{r boxcoxcars, exercise = T}
+library(MASS)
+boxcox(fit1a)
+```
+
+The value of $\lambda = 0$ is quite close to the 95% boundaries here, which suggests a log transform of the response (`price`) may help improve the model. Let's try that: 
+
+```{r newmodcars, exercise = T}
+fit2a <- lm(log(price) ~ fueltype + carbody + drivewheel + wheelbase +
+             carheight + cylindernumber + horsepower, data = car.prices)
+
+par(mfrow = c(2, 2))
+plot(fit2a)
+par(mfrow = c(1, 1))
+```
+
+These diagnostic plots look a lot better. There may be a small issue with increasing variance as shown in the scale-location plot, but it is not too severe and we will ignore it for the remainder of the exercise.
+
+4. Now that we are happy-ish with the model fit, we can examine the output (remembering that now the response has been transformed to the natural log scale):
+
+```{r output, exercise = T}
+summary(fit2a)
+```
+
+5. Now let's use the `stepAIC` function in the `MASS` library to select the "best" model based on AIC.
+
+```{r stpaiccarts, exercise = T}
+prices.stp <- stepAIC(fit2a, scope = list(upper = ~ .,lower = ~ 1))
+```
+
+`stepAIC` suggests the best model is the one that drops`carheight` and `cylindernumber` from the original model. Note that we did not include interaction terms here in order to keep things relatively simple.
+
+We should do a diagnostic check to see if the new model is still adequate before looking at the output.
+
+```{r diagstpaic, exercise = T}
+par(mfrow = c(2, 2))
+plot(prices.stp)
+par(mfrow = c(1, 1))
+```
+
+```{r resaic, exercise = T}
+summary(prices.stp)
+```
+
+6. Finally, let's use this model to predict the log-price of some new cars. We have to create a data frame with variables (columns) that match those in the model, and the new values we want to predict at for those variables in the rows. We'll pick all combinations of the factor levels for fuel type, car body type, and drive wheel, and then randomly select some wheelbase and horsepower values from the data itself (note that some of these $X_j$ combinations that appear in the rows could make literally no physical sense whatsoever. We are doing this for demonstration purposes). In a real situation you would enter the new data you were interested in predicting (log) prices for.
+
+```{r mkpreddat, exercise = T}
+attach(car.prices)
+
+# Setup dataframe containing new X values to predict at.
+# Must include values for all explanatory variables in the model 
+# (variable names must also exactly match those in the model you are predicting with.)
+new.data <- expand.grid(fueltype = levels(fueltype), 
+            carbody = levels(carbody), 
+            drivewheel = levels(drivewheel))
+
+new.data$wheelbase <- sample(wheelbase, nrow(new.data))
+new.data$horsepower <- sample(horsepower, nrow(new.data))
+
+detach()
+
+new.data
+
+# Now do the predictions:
+pred.c <- predict(prices.stp, new.data, interval = "confidence") # Predict mean values
+pred.p <- predict(prices.stp, new.data, interval = "prediction") # Predict individual values
+
+cat("\n\n Predicted Mean Values (log Scale) \n")
+cbind(new.data, pred.c)
+cat("\n\n Predicted Individual Values (log Scale) \n")
+cbind(new.data, pred.p)
+```
+

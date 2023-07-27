@@ -1,11 +1,13 @@
-name: example-environment
+name: 6003esc
 channels:
   - conda-forge
-  - r
+#  - r
 dependencies:
-  - r-irkernel=1.1
-  - r-base=3.6.1
-#  - r-base=4.1.1
+  - r-pak
+  - r-irkernel
+#  - r-irkernel=1.1
+#  - r-base=3.6.1
+  - r-base
   - r-devtools
   - r-remotes
   - r-tidyverse

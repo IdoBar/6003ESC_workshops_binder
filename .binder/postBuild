@@ -1,7 +1,7 @@
 # mkdir -p data
 # R -e "remotes::install_github('trinker/pacman')"
-R -e "remotes::install_github('gadenbuie/tweetrmd')"
-R -e "remotes::install_github('hadley/emo')"
-R -e "remotes::install_github('rstudio/fontawesome')"
+R -e "pak::pak('gadenbuie/tweetrmd')"
+R -e "pak::pak('hadley/emo')"
+R -e "pak::pak('rstudio/fontawesome')"
 # R -e "chooseCRANmirror(ind=1); install.packages('fontawesome')"
 

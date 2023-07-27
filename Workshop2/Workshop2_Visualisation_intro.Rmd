@@ -16,6 +16,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
+
 pacman::p_load(htmltools, knitr, tidyverse, fontawesome, 
                here, esquisse)
 # pacman::p_install_gh("gadenbuie/tweetrmd",
@@ -47,6 +48,12 @@ print("Hello World!")
 ## `r  fa("r-project", fill = "#384CB7")`
 
 R is a programming language and free software environment for statistical computing and graphics supported by the R Foundation for Statistical Computing (see the [R homepage](https://www.r-project.org/){target="_blank"}). The R language is widely used among statisticians and data miners for developing statistical software and data analysis. R can be installed from the Comprehensive R Archive Network (CRAN), via this [link](https://cloud.r-project.org/){target="_blank"} (choose the appropriate download for your operating system) or you can choose the R distribution offered by Microsoft (R Open), which is based on a slightly older R version, but offers additional capabilities for performance, reproducibility and platform support (can be downloaded [here](https://mran.microsoft.com/download){target="_blank"}).
+
+#### Install R on MacOS
+<iframe width="560" height="315" src="https://www.youtube.com/embed/AEebOXiMyyI" data-external= "1" title="Install R on MacOS tutorial" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+#### Install R on Windows
+<iframe width="560" height="315" src="https://www.youtube.com/embed/rHZ9MGWxU5I" data-external= "1" title="Install R on Windows tutorial" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 Windows users should also install [Rtools](https://cran.r-project.org/bin/windows/Rtools/){target="_blank"} to be able to compile and install packages from source code (a requirement for some packages).
 
