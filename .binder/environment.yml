@@ -16,7 +16,7 @@ dependencies:
   - r-rmarkdown
   - r-bookdown
   - r-ggpubr
-  - r-gtsummary
+ # - r-gtsummary
  # - r-rcpp
   - r-paletteer
   - r-learnr
