@@ -9,7 +9,7 @@ dependencies:
 #  - r-base=3.6.1
   - r-base
   - r-devtools
-  - r-remotes
+#  - r-remotes
   - r-tidyverse
   - r-pacman
   - r-shiny
@@ -21,8 +21,8 @@ dependencies:
   - r-paletteer
   - r-learnr
   - r-scales
-  - r-captioner
-  - r-here
+#  - r-captioner
+#  - r-here
   - r-htmltools
   - r-agricolae
   - r-car

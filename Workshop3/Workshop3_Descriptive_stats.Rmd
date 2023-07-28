@@ -16,7 +16,7 @@ output:
 
 ```{r setup, include=FALSE}
 pacman::p_load(tidyverse, ggpubr, paletteer, fontawesome, 
-               here, plotly, skimr, esquisse)
+               plotly, skimr, esquisse)
 # pacman::p_install_gh("gadenbuie/tweetrmd", update=FALSE)
 pacman::p_load_gh("gadenbuie/tweetrmd", update=FALSE)
 # pacman::p_load_gh("mitchelloharawild/icons", update = FALSE)
@@ -252,7 +252,7 @@ After we've finished working on Binder we can download the R script that we wrot
 Select the files/folders that you would like to download and click on `r  fa("cog", fill ="#4383A4")` More `r fa("long-arrow-alt-right")` Export... (see screenshot in Figure \@ref(fig:binder-export) below) to save the file on your computer.  
 
 ```{r binder-export, echo=FALSE, fig.cap="Download files from Binder/RStudio screenshot.", out.width = '75%'}
-knitr::include_graphics(here("figs/Rstudio_export_screenshot.png"))
+knitr::include_graphics("figs/Rstudio_export_screenshot.png")
 ```
 
 

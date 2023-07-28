@@ -18,7 +18,7 @@ output:
 ```{r setup, include=FALSE}
 
 pacman::p_load(htmltools, knitr, tidyverse, fontawesome, 
-               here, esquisse)
+               esquisse)
 # pacman::p_install_gh("gadenbuie/tweetrmd",
 #                       "hadley/emo", update = FALSE)
 pacman::p_load_gh("gadenbuie/tweetrmd",
@@ -71,7 +71,7 @@ Using Binder is as simple as clicking on the Binder badge - [![Launch Rstudio Bi
 Alternatively, you can navigate to the [Binder](https://mybinder.org/){target="_blank"} homepage and enter the URL of this tutorial's [GitHub repository](https://github.com/IdoBar/6003ESC_workshops_binder.git){target="_blank"} `https://github.com/IdoBar/6003ESC_workshops_binder.git` and click on the **launch** button (see screenshot in Figure \@ref(fig:binder) below).
  
 ```{r binder, echo=FALSE, fig.cap="Binder launch screenshot.", out.width = '100%'}
-knitr::include_graphics(here("figs/Screenshot_The_Binder_Project.png"))
+knitr::include_graphics("figs/Screenshot_The_Binder_Project.png")
 ```
 
 Now be patient while the environment is loading...  
@@ -82,7 +82,7 @@ After we've finished working on Binder we would like to download the R script th
 Select the files/folders that you would like to download and click on `r  fa("cog", fill ="#4383A4")` More `r fa("long-arrow-alt-right")` Export... (see screenshot in Figure \@ref(fig:binder-export) below) to save the file on your computer.  
 
 ```{r binder-export, echo=FALSE, fig.cap="Download files from Binder/RStudio screenshot.", out.width = '75%'}
-knitr::include_graphics(here("figs/Rstudio_export_screenshot.png"))
+knitr::include_graphics("figs/Rstudio_export_screenshot.png")
 ```
 
 
@@ -98,7 +98,7 @@ Regardless whether we installed R and RStudio locally or we use the Binder servi
 3. Select "New Directory --> New Project" and then enter "Workshop1" in the Directory name text box and browse to the "workspace" folder to create the project folder in (see screenshots A-D in Figure \@ref(fig:rstudio-proj) below)
  
 ```{r rstudio-proj, echo=FALSE, fig.cap="Create a new project in RStudio screenshots.", out.width = '100%'}
-knitr::include_graphics(here("figs/RStudio_create_project.png"))
+knitr::include_graphics("figs/RStudio_create_project.png")
 ```
 
 >4. Create a new R script file by selecting "File --> New File --> R Script" or clicking on the "New File" icon (under the "File" in the taskbar)   
@@ -111,7 +111,7 @@ For our current analysis we will use some packages from the [tidyverse](https://
 _if tidyverse is failing to install then try [bplyr](https://github.com/yonicd/bplyr){target="_blank"} or [poorman](https://nathaneastwood.github.io/poorman){target="_blank"} packages_
 
 ```{r tidyverse-wf, echo=FALSE, fig.cap="An example of a data analysis workflow using packages from the Tidyverse (credit to [The Centre for Statistics in Ecology, the Environment and Conservation, University of Cape Town](http://www.seec.uct.ac.za/r-tidyverse)).", out.width = '80%'}
-knitr::include_graphics(here("figs/tidy_workflow.png"))
+knitr::include_graphics("figs/tidy_workflow.png")
 ```
 
 These packages are already pre-installed in Binder, but they will need to be installed if you chose to run the analysis locally.  
@@ -247,7 +247,7 @@ This time we'll look at the relationship between GDP per capita and life expecta
 We can use the `esquisser(viewer = "browser")` function to interactively create this plot (Figure \@ref(fig:esquisse)). 
 
 ```{r esquisse, echo=FALSE, fig.cap="Creating a ggplot interactively with esquisse package.", out.width = '85%'}
-knitr::include_graphics(here("figs/esquisse_screenshot.png"))
+knitr::include_graphics("figs/esquisse_screenshot.png")
 ```
 
 Now copy the code from `esquisse` to the script file:
